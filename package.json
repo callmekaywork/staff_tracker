@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --turbopack && migrate",
+    "build": "approve-builds && next build --turbopack && migrate",
     "migrate": "drizzle-kit generate && drizzle-kit push",
     "start": "next start",
     "lint": "eslint"
