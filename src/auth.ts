@@ -1,7 +1,7 @@
 // import Credentials from 'next-auth/providers/credentials';
-import Credentials from '@auth/core/providers/credentials';
+// import Credentials from '@auth/core/providers/credentials';
 // import { encode as defaultEncode } from 'next-auth/jwt';
-import { encode as defaultEncode } from '@auth/core/jwt';
+import { encode as defaultEncode } from 'next-auth/jwt';
 import NextAuth from 'next-auth';
 import { drizzleAdapter } from '@/lib/drizzleAdapter';
 import authConfig from '@/lib/authConfig';
