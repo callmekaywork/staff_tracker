@@ -60,48 +60,4 @@ type AdapterSession = {
   expires: Date;
 };
 
-type ResponseType = {
-  questionId: string;
-  formId: string;
-  value: string;
-};
-
-type QuestionsAnswerType = {
-  value: string;
-  questionId: string;
-  type: string;
-};
-
-type AnswersType = {
-  id: string;
-  responseId: string;
-  questionId: string;
-  value: string;
-};
-
-type Answer = {
-  id: string;
-  questionId: string;
-  value: string;
-  label: string;
-};
-
-type ResponseAnswerType = {
-  id: string;
-  formId: string;
-  submittedAt: Date | null;
-  submittedBy: string | null;
-  answers: Answer[];
-};
-
-// answers: {
-//         id: string;
-//         questionId: string;
-//         value: string;
-//         label: string;
-//     }[];
-//     id: string;
-//     formId: string;
-//     submittedAt: Date | null;
-//     submittedBy: string | null;
-// }[]
+type AssistanceRecord = z.infer<typeof assistanceRecordSchema>;
