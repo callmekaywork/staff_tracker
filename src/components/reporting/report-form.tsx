@@ -41,7 +41,7 @@ export default function Reportform() {
   };
 
   return (
-    <div>
+    <div className="">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Controller
           control={control}
