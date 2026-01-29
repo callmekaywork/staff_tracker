@@ -110,3 +110,33 @@ export const authenticators = pgTable(
     },
   ]
 );
+
+export const assistanceRecords = pgTable('assistance_records', {
+  id: serial('id').primaryKey(),
+
+  institutionName: varchar('institution_name', { length: 255 }).notNull(),
+  institutionType: varchar('institution_type', { length: 100 }).notNull(),
+
+  contactPerson: varchar('contact_person', { length: 255 }),
+  emailAddress: varchar('email_address', { length: 255 }),
+  phoneNumber: varchar('phone_number', { length: 50 }),
+
+  beneficiaryName: varchar('beneficiary_name', { length: 255 }),
+  disability: boolean('disability').default(false),
+  disabilityType: varchar('disability_type', { length: 255 }),
+
+  race: varchar('race', { length: 100 }),
+  gender: varchar('gender', { length: 50 }),
+  geoType: varchar('geo_type', { length: 50 }), // "urban" or "rural"
+  ageRange: varchar('age_range', { length: 50 }),
+
+  needsIdentified: text('needs_identified'),
+  assistanceGiven: text('assistance_given'),
+  valueRating: integer('value_rating'), // e.g. 1–10 scale
+
+  dateAssisted: timestamp('date_assisted'),
+  userResponsible: varchar('user_responsible', { length: 255 }),
+  provinceOrState: varchar('province_state', { length: 100 }),
+
+  createdAt: timestamp('created_at').defaultNow(),
+});

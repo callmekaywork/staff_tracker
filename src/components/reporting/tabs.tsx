@@ -392,7 +392,7 @@ export default function Tabs() {
         </div>
         <div className="w-full overflow-hidden rounded-md border">
           <Table>
-            <TableHeader className="bg-pink-950">
+            <TableHeader className="bg-gray-600 flex flex-col md:flex-row">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -436,7 +436,7 @@ export default function Tabs() {
                 </TableRow>
               )}
             </TableBody> */}
-            <TableBody>
+            <TableBody className="flex flex-col md:flex-row">
               {table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -549,7 +549,7 @@ export default function Tabs() {
           )}
         </div>
 
-        <div>
+        {/* <div>
           {table.getHeaderGroups().map((headerGroup) => (
             <div key={headerGroup.id} className="flex">
               {headerGroup.headers.map((header) => (
@@ -599,7 +599,7 @@ export default function Tabs() {
               ))}
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </>
   );
