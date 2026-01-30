@@ -15,7 +15,7 @@ const client = new RPCLink({
     }
 
     // return `${window.location.origin}/rpc`;
-    return 'http://localhost:3000/api/orpc'; // just the prefix
+    return `${process.env.NEXT_PUBLIC_API_URL}/api/orpc`; // just the prefix
   },
   // url: 'http://127.0.0.1:3000/api/orpc',
   headers: { Authorization: 'Bearer token' },

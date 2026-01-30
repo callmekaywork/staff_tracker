@@ -55,6 +55,49 @@ import { orpc } from '@/orpc/client';
 
 type RowData = Record<string, string>;
 
+function EditColumnDialog({
+  rowData, // 👈 pass the old key in
+  onEdit,
+}: {
+  rowData: AssistanceRecord;
+  onEdit: (rowData: AssistanceRecord) => void;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild aria-describedby={undefined}>
+        <Button
+          variant="ghost"
+          className="m-2 flex flex-row justify-center items-center gap-2 hover:cursor-pointer"
+        >
+          <Plus /> Edit Column
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit Column</DialogTitle>
+        </DialogHeader>
+        <div className="flex gap-2 flex-col">
+          <div className="flex gap-2 flex-row">
+            <Input
+              placeholder="Column title"
+              //   value={title}
+            />
+            <DialogClose asChild>
+              <Button className="hover:cursor-pointer">Save</Button>
+            </DialogClose>
+          </div>
+
+          <div className="mt-2">
+            <DialogClose asChild>
+              <Button>Delete Column</Button>
+            </DialogClose>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function Reporttable() {
   const [isViewed, setIsViewed] = useState(false);
 
@@ -178,13 +221,50 @@ export default function Reporttable() {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
+                    onClick={() => {
+                      //   console.log(row.original);
+                    }}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                        <Dialog>
+                          <DialogTrigger asChild aria-describedby={undefined}>
+                            <button className="m-2 flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Column</DialogTitle>
+                            </DialogHeader>
+                            <div className="flex gap-2 flex-col">
+                              <div className="flex gap-2 flex-row">
+                                <label htmlFor="">
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                  )}
+                                </label>
+                                <label htmlFor="">{cell.column.id}</label>
+                                <label htmlFor="">{row.original['id']}</label>
+                                <DialogClose asChild>
+                                  <Button className="hover:cursor-pointer">
+                                    Save
+                                  </Button>
+                                </DialogClose>
+                              </div>
+
+                              <div className="mt-2">
+                                <DialogClose asChild>
+                                  <Button>Delete Column</Button>
+                                </DialogClose>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </TableCell>
                     ))}
                   </TableRow>

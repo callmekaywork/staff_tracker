@@ -6,8 +6,18 @@ import { router } from '@/orpc/route';
 
 // app/api/orpc/route.ts
 
+const allowedOrigins =
+  process.env.NODE_ENV === 'production'
+    ? ['https://staff-tracker-b8q5.vercel.app'] // your production domain
+    : ['http://localhost:3000']; // dev
+
 const handler = new RPCHandler(router, {
-  plugins: [new CORSPlugin()],
+  plugins: [
+    new CORSPlugin({
+      // origin: [`${process.env.NEXT_PUBLIC_API_URL}`],
+      origin: allowedOrigins,
+    }),
+  ],
   interceptors: [
     onError((error) => {
       console.error(error);
