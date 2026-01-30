@@ -2,11 +2,39 @@ import { z } from 'zod';
 import { ColumnDef } from '@tanstack/react-table';
 import { assistanceRecordSchema } from '@/db/validators';
 import type { AssistanceRecord } from '@/types/next-auth';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // Infer the type from Zod
 
 // Generate columns dynamically
 export const schoolColumns: ColumnDef<AssistanceRecord>[] = [
+  {
+    id: 'select',
+    size: 10, // fixed width in pixels
+    minSize: 10, // minimum width
+    maxSize: 10, // maximum width
+    header: ({ table }) => (
+      <div className="flex flex-row justify-start items-center gap-3 max-w-7">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: 'institutionName',
     header: 'Institution Name',

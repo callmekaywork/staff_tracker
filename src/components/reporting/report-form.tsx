@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,9 +29,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
-import { Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus } from 'lucide-react';
 
 export default function Reportform() {
+  const [step, setStep] = useState(0);
+
+  const nextStep = () => setStep((s) => s + 1);
+  const prevStep = () => setStep((s) => s - 1);
+
   const form = useForm({
     resolver: zodResolver(assistanceRecordSchema),
     defaultValues: {
@@ -40,8 +45,10 @@ export default function Reportform() {
       contactPerson: '',
       emailAddress: '',
       phoneNumber: '',
+      beneficiaryName: '',
       disability: false,
       geoType: 'urban',
+      dateAssisted: new Date().getDate(),
     },
   });
 
@@ -76,164 +83,227 @@ export default function Reportform() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col w-full space-y-4"
           >
-            <FieldGroup>
-              <Controller
-                control={control}
-                name="institutionName"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>
-                      Institution Name
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="Enter institution name"
-                      aria-invalid={fieldState.invalid}
+            {step === 0 && (
+              <div className="transition-all delay-200">
+                <div>
+                  <FieldGroup>
+                    <Controller
+                      control={control}
+                      name="institutionName"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Institution Name
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id={field.name}
+                            placeholder="Enter institution name"
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
 
-              <Controller
-                control={control}
-                name="institutionType"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>
-                      Institution Type
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="e.g. School, NGO"
-                      aria-invalid={fieldState.invalid}
+                    <Controller
+                      control={control}
+                      name="institutionType"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Institution Type
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id={field.name}
+                            placeholder="e.g. School, NGO"
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
+                  </FieldGroup>
 
-            <FieldGroup>
-              <Controller
-                control={control}
-                name="contactPerson"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Contact Person</FieldLabel>
-                    <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="Full name"
-                      aria-invalid={fieldState.invalid}
+                  <FieldGroup>
+                    <Controller
+                      control={control}
+                      name="contactPerson"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Contact Person
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id={field.name}
+                            placeholder="Full name"
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
 
-              <Controller
-                control={control}
-                name="emailAddress"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Email Address</FieldLabel>
-                    <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="example@email.com"
-                      aria-invalid={fieldState.invalid}
+                    <Controller
+                      control={control}
+                      name="emailAddress"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Email Address
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id={field.name}
+                            placeholder="example@email.com"
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
 
-              <Controller
-                control={control}
-                name="phoneNumber"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Contact Number</FieldLabel>
-                    <Input
-                      {...field}
-                      type="digit"
-                      id={field.name}
-                      placeholder="+27 82 123 4567"
-                      aria-invalid={fieldState.invalid}
+                    <Controller
+                      control={control}
+                      name="phoneNumber"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Contact Number
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            type="tel"
+                            id={field.name}
+                            placeholder="+27 82 123 4567"
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
 
-            <FieldGroup>
-              <Controller
-                control={control}
-                name="disability"
-                render={({ field, fieldState }) => (
-                  <Field className="flex flex-row items-center justify-between space-x-1 w-full ">
-                    <FieldLabel htmlFor={field.name}>
-                      Disability Type
-                    </FieldLabel>
-
-                    <div>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="size-4"
-                      />
-                    </div>
-
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-
-            <Controller
-              control={control}
-              name="geoType"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Geo Type</FieldLabel>
-
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    <Controller
+                      control={control}
+                      name="beneficiaryName"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Beneficiary Name
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id={field.name}
+                            placeholder="Beneficiary Name..."
+                            aria-invalid={fieldState.invalid}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </FieldGroup>
+                </div>
+                <div className="h-15 mt-4 flex justify-end items-center">
+                  <Button
+                    className="cursor-pointer h-15 w-15 flex justify-center items-center rounded-4xl"
+                    variant={'outline'}
+                    onClick={() => {
+                      setStep((prev) => prev + 1);
+                    }}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select geo type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="urban">Urban</SelectItem>
-                      <SelectItem value="rural">Rural</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+                    <ArrowRight size={40} />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {step === 1 && (
+              <div className="transition-all delay-200">
+                <div>
+                  <FieldGroup>
+                    <Controller
+                      control={control}
+                      name="disability"
+                      render={({ field, fieldState }) => (
+                        <Field className="flex flex-row items-center justify-start w-full h-15 bg-gray-900 px-2 rounded-2xl">
+                          <FieldLabel htmlFor={field.name}>
+                            Disability Type
+                          </FieldLabel>
+
+                          <div>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              className="size-4"
+                            />
+                          </div>
+
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </FieldGroup>
+
+                  <FieldGroup>
+                    <Controller
+                      control={control}
+                      name="geoType"
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel>Geo Type</FieldLabel>
+
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select geo type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="urban">Urban</SelectItem>
+                              <SelectItem value="rural">Rural</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </FieldGroup>
+                </div>
+                <div className="h-15 mt-4 flex justify-start items-center">
+                  <Button
+                    className="cursor-pointer h-15 w-15 flex justify-center items-center rounded-4xl"
+                    variant={'outline'}
+                    onClick={() => {
+                      setStep((prev) => prev - 1);
+                    }}
+                  >
+                    <ArrowLeft size={40} />
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Submit */}
-            <Button className="mt-5" type="submit">
+            <Button className="mt-1 h-16 cursor-pointer" type="submit">
               Submit
             </Button>
           </form>

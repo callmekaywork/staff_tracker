@@ -227,14 +227,18 @@ export default function Reporttable() {
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        <Dialog>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                        {/* <Dialog>
                           <DialogTrigger asChild aria-describedby={undefined}>
-                            <button className="m-2 flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
+                            <div className="m-2 flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                               {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
                               )}
-                            </button>
+                            </div>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
@@ -264,7 +268,7 @@ export default function Reporttable() {
                               </div>
                             </div>
                           </DialogContent>
-                        </Dialog>
+                        </Dialog> */}
                       </TableCell>
                     ))}
                   </TableRow>
