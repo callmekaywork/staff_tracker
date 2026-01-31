@@ -65,15 +65,17 @@ export default function Reportform() {
   };
 
   return (
-    <div className="h-20 ">
+    <div className="h-20 flex items-center w-full ">
       <Dialog>
         <DialogTrigger asChild aria-describedby={undefined}>
-          <Button
-            variant="elevated"
-            className="m-2 h-14 flex flex-row justify-center items-center gap-2 hover:cursor-pointer"
-          >
-            <Plus /> Add Information
-          </Button>
+          <div className="w-full">
+            <Button
+              variant="elevated"
+              className="w-full h-14 flex flex-row justify-center items-center gap-2 hover:cursor-pointer md:w-40"
+            >
+              <Plus /> Add Information
+            </Button>
+          </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -172,7 +174,26 @@ export default function Reportform() {
                         </Field>
                       )}
                     />
+                  </FieldGroup>
+                </div>
+                <div className="h-15 mt-4 flex justify-end items-center">
+                  <Button
+                    className="cursor-pointer h-15 w-15 flex justify-center items-center "
+                    variant={'elevated'}
+                    onClick={() => {
+                      setStep((prev) => prev + 1);
+                    }}
+                  >
+                    <ArrowRight size={40} />
+                  </Button>
+                </div>
+              </div>
+            )}
 
+            {step === 1 && (
+              <div className="transition-all delay-200">
+                <div>
+                  <FieldGroup>
                     <Controller
                       control={control}
                       name="phoneNumber"
@@ -215,31 +236,11 @@ export default function Reportform() {
                         </Field>
                       )}
                     />
-                  </FieldGroup>
-                </div>
-                <div className="h-15 mt-4 flex justify-end items-center">
-                  <Button
-                    className="cursor-pointer h-15 w-15 flex justify-center items-center rounded-4xl"
-                    variant={'outline'}
-                    onClick={() => {
-                      setStep((prev) => prev + 1);
-                    }}
-                  >
-                    <ArrowRight size={40} />
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {step === 1 && (
-              <div className="transition-all delay-200">
-                <div>
-                  <FieldGroup>
                     <Controller
                       control={control}
                       name="disability"
                       render={({ field, fieldState }) => (
-                        <Field className="flex flex-row items-center justify-start w-full h-15 bg-gray-900 px-2 rounded-2xl">
+                        <Field className="flex flex-row items-center justify-start w-full h-15 dark:bg-gray-900 px-2 border-2 mb-3">
                           <FieldLabel htmlFor={field.name}>
                             Disability Type
                           </FieldLabel>
@@ -290,8 +291,8 @@ export default function Reportform() {
                 </div>
                 <div className="h-15 mt-4 flex justify-start items-center">
                   <Button
-                    className="cursor-pointer h-15 w-15 flex justify-center items-center rounded-4xl"
-                    variant={'outline'}
+                    className="cursor-pointer h-15 w-15 flex justify-center items-center "
+                    variant={'elevated'}
                     onClick={() => {
                       setStep((prev) => prev - 1);
                     }}
@@ -303,7 +304,11 @@ export default function Reportform() {
             )}
 
             {/* Submit */}
-            <Button className="mt-1 h-16 cursor-pointer" type="submit">
+            <Button
+              className="mt-1 h-16 cursor-pointer bg-gray-500 text-white"
+              variant={'elevated'}
+              type="submit"
+            >
               Submit
             </Button>
           </form>
