@@ -3,6 +3,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { assistanceRecordSchema } from '@/db/validators';
 import type { AssistanceRecord } from '@/types/next-auth';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
 
 // Infer the type from Zod
 
@@ -14,7 +16,7 @@ export const schoolColumns: ColumnDef<AssistanceRecord>[] = [
     minSize: 10, // minimum width
     maxSize: 10, // maximum width
     header: ({ table }) => (
-      <div className="flex flex-row justify-start items-center gap-3 max-w-7">
+      <div className="flex flex-row justify-center items-center gap-3 w-8">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -26,11 +28,13 @@ export const schoolColumns: ColumnDef<AssistanceRecord>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
+      <div className="flex flex-row justify-center items-center gap-3 w-8">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -107,5 +111,26 @@ export const schoolColumns: ColumnDef<AssistanceRecord>[] = [
   {
     accessorKey: 'provinceOrState',
     header: 'Province/State',
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({ row }) => {
+      const item = row.original;
+      return (
+        <Button
+          variant={'ghost'}
+          onClick={() => {
+            //   const newData = data.filter((_, i) => i !== row.index);
+            console.log(item);
+            //   setData(newData);
+          }}
+          className="flex flex-row-reverse cursor-pointer"
+        >
+          Delete
+          <Trash2 />
+        </Button>
+      );
+    },
   },
 ];

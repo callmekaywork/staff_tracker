@@ -170,7 +170,10 @@ export default function Reporttable() {
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button
+                variant="elevated"
+                className="ml-auto w-40 h-14 cursor-pointer"
+              >
                 Columns <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -183,7 +186,7 @@ export default function Reporttable() {
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}
-                        className="capitalize"
+                        className="capitalize cursor-pointer"
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) =>
                           column.toggleVisibility(!!value)

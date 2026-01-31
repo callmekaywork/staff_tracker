@@ -6,17 +6,17 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 
 export function Onlinetoast() {
-  const onlineUser = useCheckUser();
+  //   const onlineUser = useCheckUser();
 
-  if (!onlineUser) {
-    toast('Sorry seems like you are not logged in', {
-      description: 'Features will be limited!',
-      action: {
-        label: 'Cancel',
-        onClick: () => console.log('Cancelled'),
-      },
-    });
-  }
+  //   if (!onlineUser) {
+  //     toast('Sorry seems like you are not logged in', {
+  //       description: 'Features will be limited!',
+  //       action: {
+  //         label: 'Cancel',
+  //         onClick: () => console.log('Cancelled'),
+  //       },
+  //     });
+  //   }
 
   return <Toaster />;
 }

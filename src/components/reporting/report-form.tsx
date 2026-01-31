@@ -69,8 +69,8 @@ export default function Reportform() {
       <Dialog>
         <DialogTrigger asChild aria-describedby={undefined}>
           <Button
-            variant="ghost"
-            className="m-2 flex flex-row justify-center items-center gap-2 hover:cursor-pointer"
+            variant="elevated"
+            className="m-2 h-14 flex flex-row justify-center items-center gap-2 hover:cursor-pointer"
           >
             <Plus /> Add Information
           </Button>

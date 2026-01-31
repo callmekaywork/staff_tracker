@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --turbopack && drizzle-kit push",
+    "build": "next build --turbopack ",
     "db:migrate": "drizzle-kit generate && drizzle-kit push",
     "start": "pnpm run db:migrate && next start",
     "lint": "eslint"
