@@ -4,7 +4,23 @@ import { assistanceRecordSchema } from '@/db/validators';
 import type { AssistanceRecord } from '@/types/next-auth';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Ellipsis, EllipsisVertical, PencilLine, Trash2 } from 'lucide-react';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { orpc } from '@/orpc/client';
 
 // Infer the type from Zod
 
@@ -118,18 +134,54 @@ export const schoolColumns: ColumnDef<AssistanceRecord>[] = [
     cell: ({ row }) => {
       const item = row.original;
       return (
-        <Button
-          variant={'ghost'}
-          onClick={() => {
-            //   const newData = data.filter((_, i) => i !== row.index);
-            console.log(item);
-            //   setData(newData);
-          }}
-          className="flex flex-row-reverse cursor-pointer"
-        >
-          Delete
-          <Trash2 />
-        </Button>
+        // <Button
+        //   variant={'ghost'}
+        //   onClick={() => {
+        //     //   const newData = data.filter((_, i) => i !== row.index);
+        //     console.log(item);
+        //     //   setData(newData);
+        //   }}
+        //   className="flex flex-row-reverse cursor-pointer"
+        // >
+        //   Delete
+        //   <Trash2 />
+        // </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="elevated" className="cursor-pointer">
+              <EllipsisVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-40" align="start">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Mutations</DropdownMenuLabel>
+              <DropdownMenuItem className="h-12 cursor-pointer">
+                Edit Here
+                <DropdownMenuShortcut>
+                  <PencilLine />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="h-12 cursor-pointer"
+                onClick={async () => {
+                  //   console.log(item.id);
+                  const deleteFunc = await orpc.reports.delete({ id: item.id });
+
+                  console.log(deleteFunc);
+                }}
+              >
+                Delete
+                <DropdownMenuShortcut>
+                  <Trash2 />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
