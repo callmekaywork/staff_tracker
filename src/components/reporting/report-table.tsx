@@ -153,9 +153,9 @@ export default function Reporttable() {
   return (
     <>
       <div className="w-full">
-        <div className="flex items-center py-4">
+        <div className="flex items-center justify-center py-4 h-auto flex-col gap-2 md:flex-row">
           <Input
-            placeholder="Filter institution name..."
+            placeholder="Filter by institution name..."
             value={
               (table
                 .getColumn('institutionName')
@@ -166,13 +166,13 @@ export default function Reporttable() {
                 .getColumn('institutionName')
                 ?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="w-full md:max-w-100"
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="elevated"
-                className="ml-auto w-40 h-14 cursor-pointer"
+                className="md:ml-auto w-full md:w-60 h-14 cursor-pointer"
               >
                 Columns <ChevronDown />
               </Button>
@@ -200,7 +200,7 @@ export default function Reporttable() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="w-full overflow-hidden rounded-md border">
+        <div className="w-full overflow-hidden rounded-none border-2">
           <Table>
             <TableHeader className="">
               {table.getHeaderGroups().map((headerGroup) => (

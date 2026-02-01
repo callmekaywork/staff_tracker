@@ -34,6 +34,7 @@ export const createReport = os
         emailAddress: input.emailAddress,
         phoneNumber: input.phoneNumber,
         disability: input.disability,
+        beneficiaryName: input.beneficiaryName,
         geoType: input.geoType,
       })
       .returning();
