@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --turbopack && drizzle-kit generate && drizzle-kit push && tsx scripts/seedAdmin.ts && tsx scripts/seedStaff.ts",
+    "build": "next build --turbopack && drizzle-kit generate && drizzle-kit push && tsx src/scripts/seedAdmin.ts && tsx src/scripts/seedStaff.ts",
     "db:migrate": "drizzle-kit generate && drizzle-kit push",
     "start": "pnpm run db:migrate && next start",
     "lint": "eslint",
-    "seed:admin": "tsx scripts/seedAdmin.ts",
-    "seed:staff": "tsx scripts/seedStaff.ts"
+    "seed:admin": "tsx src/scripts/seedAdmin.ts",
+    "seed:staff": "tsx src/scripts/seedStaff.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",

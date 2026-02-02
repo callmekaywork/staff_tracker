@@ -3,9 +3,10 @@ import { eq } from 'drizzle-orm';
 import { users } from '../db/schema';
 import bcrypt from 'bcrypt';
 
-import dotenv from 'dotenv';
 import { nanoid } from 'nanoid';
-dotenv.config();
+import { config } from 'dotenv';
+
+config({ path: '.env.local' });
 
 const db = drizzle(`${process.env.DATABASE_URL!}`);
 
