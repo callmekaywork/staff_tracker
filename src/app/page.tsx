@@ -3,6 +3,7 @@ import { Onlinetoast } from '@/components/header/onlinetoast';
 import Reportform from '@/components/reporting/report-form';
 import Reporttable from '@/components/reporting/report-table';
 import Tabs from '@/components/reporting/tabs';
+import Whosonline from '@/components/reporting/tracking/whosonline';
 import Image from 'next/image';
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       <Onlinetoast />
       <main className="flex min-h-screen w-full md:max-w-4xl lg:max-w-6xl flex-col items-center  py-32 px-5 sm:items-start transition-all transition-normal delay-75 ease-in-out">
         {/* <Tabs /> */}
+        <Whosonline />
         <Reportform />
         <Reporttable />
       </main>

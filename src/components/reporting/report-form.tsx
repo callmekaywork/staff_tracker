@@ -67,15 +67,13 @@ export default function Reportform() {
   return (
     <div className="h-20 flex items-center w-full ">
       <Dialog>
-        <DialogTrigger asChild aria-describedby={undefined}>
-          <div className="w-full">
-            <Button
-              variant="elevated"
-              className="w-full h-14 flex flex-row justify-center items-center gap-2 hover:cursor-pointer md:w-40"
-            >
-              <Plus /> Add Information
-            </Button>
-          </div>
+        <DialogTrigger asChild aria-describedby={undefined} className="w-full">
+          <Button
+            variant="elevated"
+            className="w-full h-14 flex flex-row justify-center items-center gap-2 hover:cursor-pointer md:w-50"
+          >
+            <Plus /> Add Information
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

@@ -5,8 +5,36 @@ import type { IncomingHttpHeaders } from 'node:http';
 import { ORPCError, os } from '@orpc/server';
 import { assistanceRecordSchema } from '@/db/validators';
 import { eq } from 'drizzle-orm';
+import { signIn } from '@/auth';
 
 // export const assistanceRouter = router({ getAll: publicProcedure.query(async () => { const records = await db.select().from(assistanceRecords); // Optionally validate with Zod before returning return records.map(r => assistanceRecordSchema.parse(r)); }),
+
+// Auth
+export const authLogin = os
+  .$context<{ headers: IncomingHttpHeaders }>()
+  .input(z.object({ email: z.string(), password: z.string() }))
+  .handler(async ({ input, context }) => {
+    // Perform delete
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: input.email,
+        password: input.password,
+        // callbackUrl: "/dashboard",
+      });
+
+      if (res?.error) {
+        // window.location.href = "/"; // ✅ triggers middleware with fresh cookies
+        return { error: res.error };
+      }
+
+      return { success: true };
+    } catch (err) {
+      return { error: `Unexpected error during sign-in.: ${err}` };
+    }
+  });
+
+// Reports
 
 export const createReport = os
   .$context<{ headers: IncomingHttpHeaders }>()
@@ -63,6 +91,7 @@ export const getAllReports = os.handler(async () => {
 });
 
 export const router = {
+  auth: {},
   reports: {
     create: createReport,
     delete: deleteReport,

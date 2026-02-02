@@ -51,6 +51,7 @@ import {
 import { Label } from '../ui/label';
 import { schoolColumns } from './tables/schools';
 import type { AssistanceRecord } from '@/types/next-auth';
+import * as XLSX from 'xlsx';
 import { orpc } from '@/orpc/client';
 
 type RowData = Record<string, string>;
@@ -122,6 +123,14 @@ export default function Reporttable() {
 
   const [data, setData] = useState<AssistanceRecord[]>([]);
 
+  async function exportExcelDoc() {
+    const records = await orpc.reports.getall();
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(records);
+    XLSX.utils.book_append_sheet(wb, ws, `test_Report_Report`);
+    XLSX.writeFile(wb, `test_Report.xlsx`);
+  }
+
   useEffect(() => {
     async function fetchData() {
       const records = await orpc.reports.getall();
@@ -151,8 +160,8 @@ export default function Reporttable() {
   });
 
   return (
-    <>
-      <div className="w-full">
+    <div className="w-full flex flex-col-reverse">
+      <div className="w-full ">
         <div className="flex items-center justify-center py-4 h-auto flex-col gap-2 md:flex-row">
           <Input
             placeholder="Filter by institution name..."
@@ -370,6 +379,18 @@ export default function Reporttable() {
           </div>
         </div>
       </div>
-    </>
+
+      <div className="w-full">
+        <Button
+          variant={'elevated'}
+          onClick={() => {
+            exportExcelDoc();
+          }}
+          className="bg-red-300 cursor-pointer dark:text-white h-16 text-black w-full md:w-100"
+        >
+          Download Excel Doc
+        </Button>
+      </div>
+    </div>
   );
 }
