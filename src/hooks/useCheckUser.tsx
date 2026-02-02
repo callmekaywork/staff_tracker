@@ -1,13 +1,25 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import React from 'react';
-import { toast } from 'sonner';
 
-export default function useCheckUser() {
-  const { status } = useSession();
+import type { User } from 'next-auth';
+
+type UserStatus = {
+  isOnline: boolean;
+  user: User | null;
+};
+
+export default function useCheckUser(): UserStatus {
+  const { data: session, status } = useSession();
 
   if (status === 'unauthenticated') {
-    return false;
+    return { isOnline: false, user: null };
   }
+
+  if (status === 'authenticated') {
+    return { isOnline: true, user: session?.user ?? null };
+  }
+
+  // covers "loading" or any other status
+  return { isOnline: false, user: null };
 }

@@ -19,7 +19,7 @@
 
 # production
 /build
-.src/migrations
+src/migrations
 
 
 # misc

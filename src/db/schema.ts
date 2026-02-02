@@ -38,6 +38,22 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at'),
 });
 
+export const userStatus = pgTable('user_status', {
+  id: serial('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+
+  company_position: text('company_position'),
+  loggedInAt: timestamp('logged_in_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  loggedOutAt: timestamp('logged_out_at', { withTimezone: true }),
+
+  // derived flag: true if loggedOutAt is null
+  isOnline: boolean('is_online').default(true).notNull(),
+});
+
 export const accounts = pgTable(
   'account',
   {

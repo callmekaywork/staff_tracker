@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { db } from '@/db';
-import { assistanceRecords } from '@/db/schema';
+import { assistanceRecords, users } from '@/db/schema';
 import type { IncomingHttpHeaders } from 'node:http';
 import { ORPCError, os } from '@orpc/server';
 import { assistanceRecordSchema } from '@/db/validators';
@@ -34,6 +34,19 @@ export const authLogin = os
     }
   });
 
+export const authCheckemail = os
+  .$context<{ headers: IncomingHttpHeaders }>()
+  .input(z.object({ email: z.string() }))
+  .handler(async ({ input, context }) => {
+    // Perform delete
+    const getdata = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, input.email));
+
+    return getdata;
+  });
+
 // Reports
 
 export const createReport = os
@@ -64,6 +77,7 @@ export const createReport = os
         disability: input.disability,
         beneficiaryName: input.beneficiaryName,
         geoType: input.geoType,
+        dateAssisted: new Date(),
       })
       .returning();
 
@@ -91,7 +105,9 @@ export const getAllReports = os.handler(async () => {
 });
 
 export const router = {
-  auth: {},
+  auth: {
+    email_check: authCheckemail,
+  },
   reports: {
     create: createReport,
     delete: deleteReport,

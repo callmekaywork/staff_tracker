@@ -7,7 +7,7 @@ import Link from 'next/link';
 import React from 'react';
 
 export default function Whosonline() {
-  const userOnline = useCheckUser();
+  const { isOnline, user } = useCheckUser();
 
   return (
     <div className="w-full">
@@ -25,7 +25,7 @@ export default function Whosonline() {
         </div>
 
         <div className="min-h-20 dark:bg-gray-800 border-2">
-          {!userOnline ? (
+          {!isOnline ? (
             <div className="w-full flex flex-col min-h-30 justify-center items-center gap-2">
               <h1>No User is Online</h1>
               <Link
@@ -37,7 +37,7 @@ export default function Whosonline() {
             </div>
           ) : (
             <div>
-              <h2>Some online user</h2>
+              <h2>{user?.email}</h2>
             </div>
           )}
         </div>
