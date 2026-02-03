@@ -8,6 +8,13 @@
       "when": 1770056276791,
       "tag": "0000_real_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770162215988,
+      "tag": "0001_safe_the_leader",
+      "breakpoints": true
     }
   ]
 }
