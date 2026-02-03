@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --turbopack ",
-    "db:migrate": "drizzle-kit generate && drizzle-kit push",
+    "db:migrate": "drizzle-kit generate && drizzle-kit push && drizzle-kit generate && drizzle-kit push && tsx src/scripts/seedAdmin.ts && tsx src/scripts/seedStaff.ts",
     "lint": "eslint",
     "start": "pnpm run db:migrate && next start",
     "seed:admin": "tsx src/scripts/seedAdmin.ts",

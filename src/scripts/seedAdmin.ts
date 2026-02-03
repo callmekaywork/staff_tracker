@@ -14,7 +14,7 @@ async function seedSuperAdmin() {
   const existing = await db
     .select()
     .from(users)
-    .where(eq(users.email, 'callmekay@gmail.com'));
+    .where(eq(users.email, 'callmekaywork@gmail.com'));
   if (existing.length === 0) {
     // if nothing hash the password
     const hash = await bcrypt.hash('Nyokongadmin@4891', 10);

@@ -156,3 +156,22 @@ export const assistanceRecords = pgTable('assistance_records', {
 
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+export const tasks = pgTable('tasks', {
+  id: serial('id').primaryKey(),
+
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+
+  title: text('title').notNull(), // short name of the task
+  description: text('description'), // optional longer description
+
+  startedAt: timestamp('started_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+
+  endsAt: timestamp('ends_at', { withTimezone: true }),
+
+  status: text('status').default('in_progress').notNull(), // suggestion: track task state
+});

@@ -139,14 +139,6 @@ export const getAllReports = os.handler(async () => {
 export const loginOutput = os
   .$context<{ headers: IncomingHttpHeaders }>()
   .input(LoginSchema)
-  // .output(
-  //   z.object({
-  //     id: z.string(),
-  //     name: z.string(),
-  //     email: z.string().email(),
-  //     role: z.string(),
-  //   })
-  // )
   .handler(async ({ input }) => {
     const { email, password } = input;
 
@@ -183,12 +175,22 @@ export const loginOutput = os
     }
 
     // sign us in
-    await signIn('credentials', {
+    const checkSignIn = await signIn('credentials', {
       email,
       password,
       redirect: false,
     });
 
+    if (checkSignIn) {
+      console.log('Sign in was successfull lets update the last login');
+
+      await db.insert(userStatus).values({
+        userId: user.id,
+        company_position: user.role,
+        loggedInAt: new Date(),
+        isOnline: true,
+      });
+    }
     // 3. Return user object
     return {
       id: user.id,
@@ -197,6 +199,26 @@ export const loginOutput = os
       role: user.role,
     };
   });
+
+export const whosLoggedIn = os.handler(async () => {
+  // Example: get user + status by userId
+  const result = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      firstname: users.firstname,
+      role: users.role,
+      company_position: userStatus.company_position,
+      loggedInAt: userStatus.loggedInAt,
+      loggedOutAt: userStatus.loggedOutAt,
+      isOnline: userStatus.isOnline,
+    })
+    .from(users)
+    .leftJoin(userStatus, eq(users.id, userStatus.userId))
+    .where(eq(userStatus.isOnline, true));
+
+  return result;
+});
 
 export const router = {
   auth: {
@@ -210,6 +232,9 @@ export const router = {
     create: createReport,
     delete: deleteReport,
     getall: getAllReports,
+  },
+  tasks: {
+    whosonline: whosLoggedIn,
   },
   // server/auth.ts
 };

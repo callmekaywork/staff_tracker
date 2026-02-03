@@ -61,3 +61,14 @@ type AdapterSession = {
 };
 
 type AssistanceRecord = z.infer<typeof assistanceRecordSchema>;
+
+type WhosOnlineObjectType = {
+  id: string;
+  email: string;
+  firstname: string | null;
+  role: 'user' | 'admin' | 'staff';
+  company_position: string | null;
+  loggedInAt: Date | null;
+  loggedOutAt: Date | null;
+  isOnline: boolean | null;
+};

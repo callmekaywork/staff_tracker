@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import useCheckUser from '@/hooks/useCheckUser';
 import Link from 'next/link';
-import React, { useActionState, useState } from 'react';
+import React, { useActionState, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import z from 'zod';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { orpc } from '@/orpc/client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle2Icon } from 'lucide-react';
@@ -33,15 +33,20 @@ import { Toaster } from '@/components/ui/sonner';
 import { signIn, signOut } from '@/auth';
 import { loginAction } from './loginaction';
 import { refresh } from 'next/cache';
+import { WhosOnlineObjectType } from '@/types/next-auth';
+import { Label } from '@/components/ui/label';
 
 export default function Whosonline() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
+  const [isUsersOnline, setIsUsersOnline] = useState<WhosOnlineObjectType[]>(
+    []
+  );
 
   const { isOnline, user } = useCheckUser();
 
   const [isEmail, setIsEmail] = useState(false);
 
-  const form = useForm({
+  const loginForm = useForm({
     resolver: zodResolver(checkLoginSchema),
     defaultValues: {
       email: '',
@@ -49,40 +54,35 @@ export default function Whosonline() {
     },
   });
 
+  const taskForm = useForm({});
+
+  useEffect(() => {
+    async function GetOnlineUser() {
+      const res = await orpc.tasks.whosonline();
+      setIsUsersOnline(res);
+    }
+
+    GetOnlineUser();
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit } = loginForm;
 
-  const onSubmit = async (data: z.infer<typeof checkLoginSchema>) => {
+  const loginFormSubmit = async (data: z.infer<typeof checkLoginSchema>) => {
     // console.log('Form submitted:', data);
     try {
       const checkEmail = await orpc.auth.login(data);
 
-      refresh();
+      toast.info(` successfull login`, {
+        position: 'top-left',
+      });
     } catch (error) {
+      toast.info(`${error} loggin in - Please try again`, {
+        position: 'top-left',
+      });
       console.log(error);
     }
-    // try {
-    //   const res = await signIn('credentials', {
-    //     redirect: false,
-    //     email: data.email,
-    //     password: data.password,
-    //     // callbackUrl: "/dashboard",
-    //   });
-    //   // if (res?.error) {
-
-    //   //   return { error: res.error };
-    //   // }
-    //   toast.info(` successfull login`, {
-    //     position: 'top-left',
-    //   });
-    //   // return { success: true };
-    // } catch (err) {
-    //   toast.info(`Error loggin in - Please try again`, {
-    //     position: 'top-left',
-    //   });
-    //   return { error: `Unexpected error during sign-in.: ${err}` };
-    // }
   };
 
   return (
@@ -135,27 +135,8 @@ export default function Whosonline() {
                     </DialogDescription>
                     <DialogContent>
                       <div>
-                        {/* {isEmail && (
-                          <Alert>
-                            <CheckCircle2Icon />
-                            <AlertTitle>Payment successful</AlertTitle>
-                            <AlertDescription>
-                              Your payment of $29.99 has been processed. A
-                              receipt has been sent to your email address.
-                            </AlertDescription>
-                          </Alert>
-                        )} */}
                         <form
-                          // onSubmit={handleSubmit(async (data) => {
-                          //   // console.log(data);
-
-                          //   const res = await signIn('credentials', {
-                          //     redirect: false,
-                          //     email: data.email,
-                          //     password: data.password,
-                          //   });
-                          // })}
-                          onSubmit={handleSubmit(onSubmit)}
+                          onSubmit={handleSubmit(loginFormSubmit)}
                           // action={formAction}
                           className="flex flex-col w-full space-y-4"
                         >
@@ -243,11 +224,72 @@ export default function Whosonline() {
             </div>
           ) : (
             <div>
-              <h2>{user?.email}</h2>
+              <h2 className="p-2">{user?.email}</h2>
+              <div>
+                <Dialog>
+                  <DialogTrigger
+                    className={`${buttonVariants({ variant: 'elevated' })} m-2`}
+                  >
+                    Update my task
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>What are you busy with today</DialogTitle>
+                      <DialogDescription>Updating my task</DialogDescription>
+                      <DialogContent>
+                        <div>
+                          <form>
+                            <FieldGroup>
+                              <Controller
+                                control={control}
+                                name="email"
+                                render={({ field, fieldState }) => (
+                                  <Field>
+                                    <FieldLabel htmlFor={field.name}>
+                                      Email:
+                                    </FieldLabel>
+                                    <Input
+                                      {...field}
+                                      id={field.name}
+                                      type="email"
+                                      placeholder="Enter your company email...."
+                                      aria-invalid={fieldState.invalid}
+                                    />
+                                    {fieldState.invalid && (
+                                      <FieldError errors={[fieldState.error]} />
+                                    )}
+                                  </Field>
+                                )}
+                              />
+                            </FieldGroup>
+                          </form>
+                        </div>
+                      </DialogContent>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           )}
         </div>
-        <div className="min-h-20 dark:bg-gray-800 border-2"></div>
+        <div className="min-h-20 dark:bg-gray-800 border-2">
+          <div className="grid grid-rows-auto">
+            {isUsersOnline &&
+              isUsersOnline.map((content, idx) => (
+                <div
+                  key={idx}
+                  className=" m-2 border-2 flex flex-col items-center justify-center gap-2 w-50 h-60"
+                >
+                  <Label>{content.firstname}</Label>
+                  <Label>{content.email}</Label>
+                  <div>
+                    <Label>Task:</Label>
+                    <Label>Building the Task System</Label>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
       </div>
     </div>
   );
