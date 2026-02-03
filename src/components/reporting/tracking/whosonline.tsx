@@ -30,8 +30,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
 import { loginAction } from './loginaction';
+import { refresh } from 'next/cache';
 
 export default function Whosonline() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
@@ -44,14 +45,23 @@ export default function Whosonline() {
     resolver: zodResolver(checkLoginSchema),
     defaultValues: {
       email: '',
+      password: '',
     },
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const { control, handleSubmit } = form;
 
   const onSubmit = async (data: z.infer<typeof checkLoginSchema>) => {
     // console.log('Form submitted:', data);
-    const checkEmail = await orpc.auth.login(data);
+    try {
+      const checkEmail = await orpc.auth.login(data);
+
+      refresh();
+    } catch (error) {
+      console.log(error);
+    }
     // try {
     //   const res = await signIn('credentials', {
     //     redirect: false,
@@ -91,6 +101,16 @@ export default function Whosonline() {
         </div>
 
         <Toaster />
+
+        {isOnline && (
+          <Button
+            onClick={async () => {
+              await orpc.auth.signout();
+            }}
+          >
+            Sign us Out
+          </Button>
+        )}
 
         <div className="min-h-20 dark:bg-gray-800 border-2">
           {!isOnline ? (
@@ -135,7 +155,8 @@ export default function Whosonline() {
                           //     password: data.password,
                           //   });
                           // })}
-                          action={formAction}
+                          onSubmit={handleSubmit(onSubmit)}
+                          // action={formAction}
                           className="flex flex-col w-full space-y-4"
                         >
                           <FieldGroup>
@@ -167,15 +188,36 @@ export default function Whosonline() {
                               render={({ field, fieldState }) => (
                                 <Field>
                                   <FieldLabel htmlFor={field.name}>
-                                    Email:
+                                    Password:
                                   </FieldLabel>
-                                  <Input
+                                  {/* <Input
                                     {...field}
                                     id={field.name}
                                     type="password"
                                     placeholder="Enter your secret password...."
                                     aria-invalid={fieldState.invalid}
-                                  />
+                                  /> */}
+                                  <div className="relative">
+                                    <Input
+                                      {...field}
+                                      id={field.name}
+                                      type={showPassword ? 'text' : 'password'}
+                                      placeholder="Enter your secret password..."
+                                      aria-invalid={fieldState.invalid}
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="absolute right-2 top-2"
+                                      onClick={() =>
+                                        setShowPassword(!showPassword)
+                                      }
+                                    >
+                                      {showPassword ? 'Hide' : 'Show'}{' '}
+                                    </Button>
+                                  </div>
+
                                   {fieldState.invalid && (
                                     <FieldError errors={[fieldState.error]} />
                                   )}

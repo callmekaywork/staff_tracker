@@ -1,11 +1,19 @@
 import { z } from 'zod';
 import { db } from '@/db';
-import { assistanceRecords, users, userStatus } from '@/db/schema';
+import { accounts, assistanceRecords, users, userStatus } from '@/db/schema';
 import type { IncomingHttpHeaders } from 'node:http';
 import { ORPCError, os } from '@orpc/server';
 import { assistanceRecordSchema, checkLoginSchema } from '@/db/validators';
 import { eq } from 'drizzle-orm';
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
+import { auth } from '@/auth';
+
+import { cookies } from 'next/headers';
+
+const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
 // export const assistanceRouter = router({ getAll: publicProcedure.query(async () => { const records = await db.select().from(assistanceRecords); // Optionally validate with Zod before returning return records.map(r => assistanceRecordSchema.parse(r)); }),
 
@@ -128,16 +136,82 @@ export const getAllReports = os.handler(async () => {
   }));
 });
 
+export const loginOutput = os
+  .$context<{ headers: IncomingHttpHeaders }>()
+  .input(LoginSchema)
+  // .output(
+  //   z.object({
+  //     id: z.string(),
+  //     name: z.string(),
+  //     email: z.string().email(),
+  //     role: z.string(),
+  //   })
+  // )
+  .handler(async ({ input }) => {
+    const { email, password } = input;
+
+    // 1. Validate user
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1)
+      .then((res) => res[0]);
+
+    if (!user) throw new Error('Invalid credentials');
+
+    // 2. Check accounts
+    const check = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.userId, user.id))
+      .limit(1);
+
+    if (check.length > 0) {
+      await db
+        .update(accounts)
+        .set({ session_state: 'updatedcredentials' })
+        .where(eq(accounts.userId, user.id));
+    } else {
+      await db.insert(accounts).values({
+        userId: user.id,
+        type: 'email',
+        provider: 'credentials',
+        providerAccountId: user.id,
+        session_state: 'newcredentials',
+      });
+    }
+
+    // sign us in
+    await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    });
+
+    // 3. Return user object
+    return {
+      id: user.id,
+      name: user.firstname,
+      email: user.email,
+      role: user.role,
+    };
+  });
+
 export const router = {
   auth: {
     email_check: authCheckemail,
-    login: authLogin,
+    login: loginOutput,
+    signout: os.handler(async () => {
+      signOut();
+    }),
   },
   reports: {
     create: createReport,
     delete: deleteReport,
     getall: getAllReports,
   },
+  // server/auth.ts
 };
 function getServerSession(authOptions: any) {
   throw new Error('Function not implemented.');
