@@ -58,7 +58,8 @@ export const {
   },
   session: {
     strategy: 'database',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    // maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 9 * 60 * 60,
   },
   jwt: {
     encode: async function (params) {
@@ -72,7 +73,8 @@ export const {
         const createdSession = await drizzleAdapter?.createSession?.({
           sessionToken: sessionToken,
           userId: params.token.id as string,
-          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          // expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          expires: new Date(Date.now() + 9 * 60 * 60 * 1000),
         });
 
         if (!createdSession) {
@@ -93,7 +95,7 @@ export const {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 30 * 24 * 60 * 60, // 30 days
+        maxAge: 9 * 60 * 60, // 9 hours
       },
     },
   },

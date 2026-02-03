@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { db } from '@/db';
-import { assistanceRecords, users } from '@/db/schema';
+import { assistanceRecords, users, userStatus } from '@/db/schema';
 import type { IncomingHttpHeaders } from 'node:http';
 import { ORPCError, os } from '@orpc/server';
-import { assistanceRecordSchema } from '@/db/validators';
+import { assistanceRecordSchema, checkLoginSchema } from '@/db/validators';
 import { eq } from 'drizzle-orm';
 import { signIn } from '@/auth';
 
@@ -12,40 +12,62 @@ import { signIn } from '@/auth';
 // Auth
 export const authLogin = os
   .$context<{ headers: IncomingHttpHeaders }>()
-  .input(z.object({ email: z.string(), password: z.string() }))
+  .input(checkLoginSchema)
   .handler(async ({ input, context }) => {
     // Perform delete
-    try {
-      const res = await signIn('credentials', {
-        redirect: false,
-        email: input.email,
-        password: input.password,
-        // callbackUrl: "/dashboard",
-      });
-
-      if (res?.error) {
-        // window.location.href = "/"; // ✅ triggers middleware with fresh cookies
-        return { error: res.error };
-      }
-
-      return { success: true };
-    } catch (err) {
-      return { error: `Unexpected error during sign-in.: ${err}` };
-    }
+    // try {
+    //   const res = await signIn('credentials', {
+    //     redirect: false,
+    //     email: input.email,
+    //     password: input.password,
+    //   });
+    //   if (res?.error) {
+    //     throw new Error(res.error);
+    //   }
+    //   return res;
+    //   // const res = await signIn('credentials', {
+    //   //   redirect: false,
+    //   //   email: input.email,
+    //   //   password: input.password,
+    //   //   // callbackUrl: "/dashboard",
+    //   // });
+    //   console.log('is it getting here', input);
+    //   // if (session?.error) {
+    //   //   // window.location.href = "/"; // ✅ triggers middleware with fresh cookies
+    //   //   console.log('check errors');
+    //   //   return { error: res.error };
+    //   // }
+    //   // return { success: true };
+    // } catch (err) {
+    //   return { error: `Unexpected error during sign-in.: ${err}` };
+    // }
   });
 
 export const authCheckemail = os
   .$context<{ headers: IncomingHttpHeaders }>()
-  .input(z.object({ email: z.string() }))
+  .input(z.object({ emailAddress: z.string() }))
   .handler(async ({ input, context }) => {
     // Perform delete
     const getdata = await db
       .select()
       .from(users)
-      .where(eq(users.email, input.email));
+      .where(eq(users.email, input.emailAddress));
 
     return getdata;
   });
+
+export const authIsOnline = os.handler(async () => {
+  const getdata = await db
+    .select({
+      userStatus, // all columns from userStatus
+      user: users, // all columns from users, aliased as "user"
+    })
+    .from(userStatus)
+    .innerJoin(users, eq(userStatus.userId, users.id)) // join condition
+    .where(eq(userStatus.isOnline, true));
+
+  return getdata;
+});
 
 // Reports
 
@@ -100,13 +122,16 @@ export const deleteReport = os
 
 export const getAllReports = os.handler(async () => {
   const getdata = await db.select().from(assistanceRecords);
-
-  return getdata;
+  return getdata.map((r) => ({
+    ...r,
+    dateAssisted: r.dateAssisted ? r.dateAssisted.toISOString() : null,
+  }));
 });
 
 export const router = {
   auth: {
     email_check: authCheckemail,
+    login: authLogin,
   },
   reports: {
     create: createReport,
@@ -114,3 +139,6 @@ export const router = {
     getall: getAllReports,
   },
 };
+function getServerSession(authOptions: any) {
+  throw new Error('Function not implemented.');
+}

@@ -27,3 +27,12 @@ export const assistanceRecordSchema = z.object({
 
   createdAt: z.coerce.date().default(() => new Date()),
 });
+
+export const checkEmailSchema = z.object({
+  emailAddress: z.string().min(1).max(255),
+});
+
+export const checkLoginSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+});

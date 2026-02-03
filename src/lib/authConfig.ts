@@ -1,12 +1,12 @@
-import { sessions } from "./../db/schema";
+import { sessions } from './../db/schema';
 // auth config
-import Google from "next-auth/providers/google";
-import type { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { db } from "@/db";
-import { eq } from "drizzle-orm";
-import { accounts, users } from "@/db/schema";
-import { LoginSchema } from "@/lib/loginschema";
+import Google from 'next-auth/providers/google';
+import type { NextAuthConfig } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { db } from '@/db';
+import { eq } from 'drizzle-orm';
+import { accounts, users } from '@/db/schema';
+import { LoginSchema } from '@/lib/loginschema';
 
 export default {
   providers: [
@@ -16,10 +16,10 @@ export default {
     }),
 
     Credentials({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
 
       authorize: async (credentials) => {
@@ -41,14 +41,14 @@ export default {
           .where(eq(accounts.userId, user.id))
           .limit(1);
 
-        const expDate = Date.now() + 30 * 24 * 60 * 60 * 1000;
+        const expDate = Date.now() + 9 * 60 * 60;
 
         if (check.length > 0) {
           // console.log("found something");
           await db
             .update(accounts)
             .set({
-              session_state: "updatedcredentials",
+              session_state: 'updatedcredentials',
             })
             .where(eq(accounts.userId, user.id));
 
@@ -63,7 +63,7 @@ export default {
             type: `email`,
             provider: `credentials`,
             providerAccountId: user.id,
-            session_state: "newcredentials",
+            session_state: 'newcredentials',
             // expires_at: Date.now() + 30 * 24 * 60 * 60 * 1000,
           });
 
