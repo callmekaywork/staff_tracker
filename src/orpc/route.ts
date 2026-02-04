@@ -267,8 +267,8 @@ export const getMyTask = os
       .select()
       .from(tasks)
       .where(eq(tasks.userId, input.id))
-      .orderBy(desc(tasks.startedAt))
-      .limit(1);
+      .orderBy(desc(tasks.startedAt));
+    // .limit(1);
 
     return latestTask ?? null;
   });
@@ -318,14 +318,14 @@ export const startingMyTask = os
   });
 
 export const endingMyTask = os
-  .input(z.object({ id: z.string() }))
+  .input(z.object({ id: z.string(), taskId: z.number() }))
   .handler(async ({ input }) => {
     const updateTask = await db
       .update(tasks)
       .set({
         status: 'done',
       })
-      .where(eq(tasks.userId, input.id));
+      .where(and(eq(tasks.userId, input.id), eq(tasks.id, input.taskId)));
 
     if (updateMyTask) {
       return { success: 'Task is now complete' };

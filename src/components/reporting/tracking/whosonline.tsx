@@ -44,6 +44,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { redirect } from 'next/navigation';
+import Loading from '@/app/loading';
 
 export default function Whosonline() {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -56,9 +57,11 @@ export default function Whosonline() {
 
   const [isUserTask, setIsUserTask] = useState<userTaskType[]>([]);
 
-  const { isOnline, user } = useCheckUser();
+  const { isOnline, user, loading } = useCheckUser();
 
   const [isEmail, setIsEmail] = useState(false);
+
+  const [isForcedLoading, setIsForcedLoading] = useState(false);
 
   const loginForm = useForm({
     resolver: zodResolver(checkLoginSchema),
@@ -74,6 +77,7 @@ export default function Whosonline() {
       title: '',
       description: '',
       status: 'not_started',
+      priority: 'low',
       userId: '',
     },
   });
@@ -145,6 +149,7 @@ export default function Whosonline() {
           title: data.title,
           description: data.description,
           status: data.status,
+          priority: data.priority,
           userId: user.id,
         });
 
@@ -153,7 +158,13 @@ export default function Whosonline() {
             position: 'top-center',
           });
 
+          // setIsForcedLoading(true);
+
           setUpdateTaskOpen(false);
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
         } else {
           toast.info(`${checkEmail.error}`, {
             position: 'top-center',
@@ -167,6 +178,10 @@ export default function Whosonline() {
       console.log(error);
     }
   };
+
+  if (loading || isForcedLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full">
@@ -350,7 +365,11 @@ export default function Whosonline() {
                             render={({ field, fieldState }) => (
                               <Field>
                                 <FieldLabel htmlFor={field.name}>
-                                  Description:
+                                  Description{' '}
+                                  <span className="text-amber-700">
+                                    (optional)
+                                  </span>
+                                  :
                                 </FieldLabel>
                                 <Input
                                   {...field}
@@ -405,6 +424,42 @@ export default function Whosonline() {
                               </Field>
                             )}
                           />
+
+                          <Controller
+                            control={control}
+                            name="priority"
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel>Priority: </FieldLabel>
+
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger className="h-14">
+                                    <SelectValue
+                                      className="h-14"
+                                      placeholder="Select Status Type"
+                                    />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem className="h-14" value="low">
+                                      Priority Low
+                                    </SelectItem>
+                                    <SelectItem className="h-14" value="medium">
+                                      Priority Medium
+                                    </SelectItem>
+                                    <SelectItem className="h-14" value="high">
+                                      Priority High
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
                         </FieldGroup>
                         <Button
                           className="mt-1 h-16 cursor-pointer bg-gray-500 text-white w-full"
@@ -438,6 +493,13 @@ export default function Whosonline() {
                                 }
                               );
 
+                              // setIsForcedLoading(true);
+
+                              setTimeout(() => {
+                                window.location.reload();
+                                // setIsForcedLoading(false);
+                              }, 3000);
+
                               // window.location.reload();
                             }
                           }}
@@ -454,6 +516,7 @@ export default function Whosonline() {
                             if (user) {
                               const updateTask = await orpc.tasks.endmytask({
                                 id: user.id,
+                                taskId: isUserTask[0].id,
                               });
 
                               toast.info(
@@ -462,6 +525,10 @@ export default function Whosonline() {
                                   position: 'top-center',
                                 }
                               );
+
+                              setTimeout(() => {
+                                window.location.reload();
+                              }, 3000);
 
                               // window.location.reload();
                             }
