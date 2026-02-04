@@ -390,10 +390,15 @@ export default function Whosonline() {
                   key={idx}
                   className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-36 sm:w-40 md:w-50 h-60"
                 >
-                  {ts.isOnline && (
+                  {ts.isOnline ? (
                     <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
                       <div className="h-4 w-4 bg-green-600 rounded-full"></div>
                       Online
+                    </div>
+                  ) : (
+                    <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
+                      <div className="h-4 w-4 bg-red-600 rounded-full"></div>
+                      Offline
                     </div>
                   )}
                   <Label className="w-full px-5">{ts.firstname}</Label>

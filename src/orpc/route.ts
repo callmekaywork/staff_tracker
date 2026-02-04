@@ -19,6 +19,7 @@ import { signIn, signOut } from '@/auth';
 import { auth } from '@/auth';
 
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 const LoginSchema = z.object({
   email: z.string().email(),
@@ -194,14 +195,29 @@ export const loginOutput = os
     });
 
     if (checkSignIn) {
-      console.log('Sign in was successfull lets update the last login');
+      // console.log('Sign in was successfull lets update the last login');
 
-      await db.insert(userStatus).values({
-        userId: user.id,
-        company_position: user.role,
-        loggedInAt: new Date(),
-        isOnline: true,
-      });
+      const checkStatus = await db
+        .select()
+        .from(userStatus)
+        .where(
+          and(eq(userStatus.userId, user.id), eq(userStatus.isOnline, false))
+        )
+        .limit(1);
+
+      if (checkStatus) {
+        await db
+          .update(userStatus)
+          .set({ isOnline: true })
+          .where(eq(userStatus.userId, user.id));
+      } else {
+        await db.insert(userStatus).values({
+          userId: user.id,
+          company_position: user.role,
+          loggedInAt: new Date(),
+          isOnline: true,
+        });
+      }
     }
     // 3. Return user object
     return {
@@ -263,6 +279,8 @@ export const router = {
           .set({ isOnline: false })
           .where(eq(userStatus.userId, input.id));
         signOut();
+
+        redirect('/');
       }),
   },
   reports: {
