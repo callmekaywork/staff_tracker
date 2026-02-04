@@ -367,7 +367,6 @@ export default function Whosonline() {
                             )}
                           />
                         </FieldGroup>
-                        <button type="submit">press</button>
                         <Button
                           className="mt-1 h-16 cursor-pointer bg-gray-500 text-white w-full"
                           variant={'elevated'}
