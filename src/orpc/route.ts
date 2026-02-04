@@ -9,8 +9,12 @@ import {
 } from '@/db/schema';
 import type { IncomingHttpHeaders } from 'node:http';
 import { ORPCError, os } from '@orpc/server';
-import { assistanceRecordSchema, checkLoginSchema } from '@/db/validators';
-import { eq } from 'drizzle-orm';
+import {
+  assistanceRecordSchema,
+  checkLoginSchema,
+  updateTaskSchema,
+} from '@/db/validators';
+import { eq, isNull, and } from 'drizzle-orm';
 import { signIn, signOut } from '@/auth';
 import { auth } from '@/auth';
 
@@ -229,10 +233,23 @@ export const whosLoggedIn = os.handler(async () => {
     .from(users)
     .leftJoin(userStatus, eq(users.id, userStatus.userId))
     .leftJoin(tasks, eq(users.id, tasks.userId))
-    .where(eq(userStatus.isOnline, true));
+    .where(and(eq(userStatus.isOnline, true), isNull(tasks.endsAt)));
 
   return result;
 });
+
+export const updateMyTask = os
+  .input(updateTaskSchema)
+  .handler(async ({ input }) => {
+    const updateTask = await db.insert(tasks).values({
+      title: input.title,
+      description: input.description,
+      status: input.status,
+      userId: input.userId,
+    });
+
+    return { success: 'Task Inserted' };
+  });
 
 export const router = {
   auth: {
@@ -249,6 +266,7 @@ export const router = {
   },
   tasks: {
     whosonline: whosLoggedIn,
+    updatetask: updateMyTask,
   },
   // server/auth.ts
 };

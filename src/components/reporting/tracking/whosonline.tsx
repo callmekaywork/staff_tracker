@@ -67,6 +67,8 @@ export default function Whosonline() {
     defaultValues: {
       title: '',
       description: '',
+      status: 'not_started',
+      userId: '',
     },
   });
 
@@ -83,7 +85,7 @@ export default function Whosonline() {
 
   const { control: loginControl, handleSubmit: loginFormSubmitHandler } =
     loginForm;
-  const { control: taskControl, handleSubmit: taskHandlerSubmit } = taskForm;
+  const { control, handleSubmit: taskHandleSubmit } = taskForm;
 
   const loginFormSubmit = async (data: z.infer<typeof checkLoginSchema>) => {
     // console.log('Form submitted:', data);
@@ -91,12 +93,36 @@ export default function Whosonline() {
       const checkEmail = await orpc.auth.login(data);
 
       toast.info(` successfull login`, {
-        position: 'top-left',
+        position: 'top-center',
       });
 
       setLoginOpen(false);
     } catch (error) {
       toast.info(`${error} loggin in - Please try again`, {
+        position: 'top-left',
+      });
+      console.log(error);
+    }
+  };
+
+  const taskSubmit = async (data: z.infer<typeof updateTaskSchema>) => {
+    // console.log('Form submitted:', data);
+
+    try {
+      if (user) {
+        const checkEmail = await orpc.tasks.updatetask({
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          userId: user.id,
+        });
+
+        toast.info(` successfull Task Updated`, {
+          position: 'top-center',
+        });
+      }
+    } catch (error) {
+      toast.info(`${error} Something went wrong`, {
         position: 'top-left',
       });
       console.log(error);
@@ -134,12 +160,6 @@ export default function Whosonline() {
           {!isOnline ? (
             <div className="w-full flex flex-col min-h-30 justify-center items-center gap-2">
               <h1>No User is Online</h1>
-              {/* <Link
-                href={'/auth/staff/register'}
-                className="text-3xl font-bold underline text-purple-600"
-              >
-                Check your email?
-              </Link> */}
 
               <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
                 <DialogTrigger className="text-4xl cursor-pointer">
@@ -257,10 +277,13 @@ export default function Whosonline() {
                       <DialogDescription>Updating my task</DialogDescription>
                     </DialogHeader>
                     <div>
-                      <form className="flex flex-col gap-5">
+                      <form
+                        onSubmit={taskHandleSubmit(taskSubmit)}
+                        className="flex flex-col gap-5"
+                      >
                         <FieldGroup>
                           <Controller
-                            control={taskControl}
+                            control={control}
                             name="title"
                             render={({ field, fieldState }) => (
                               <Field>
@@ -281,7 +304,7 @@ export default function Whosonline() {
                             )}
                           />
                           <Controller
-                            control={taskControl}
+                            control={control}
                             name="description"
                             render={({ field, fieldState }) => (
                               <Field>
@@ -304,7 +327,7 @@ export default function Whosonline() {
                         </FieldGroup>
                         <FieldGroup>
                           <Controller
-                            control={taskControl}
+                            control={control}
                             name="status"
                             render={({ field, fieldState }) => (
                               <Field>
@@ -342,6 +365,7 @@ export default function Whosonline() {
                             )}
                           />
                         </FieldGroup>
+                        <button type="submit">press</button>
                         <Button
                           className="mt-1 h-16 cursor-pointer bg-gray-500 text-white w-full"
                           variant={'elevated'}
@@ -359,26 +383,35 @@ export default function Whosonline() {
         </div>
         <div className="min-h-20 dark:bg-gray-800 border-2">
           <div className="grid grid-rows-auto">
-            {isUsersOnline &&
+            {isUsersOnline ? (
               isUsersOnline.map((ts, idx) => (
                 <div
                   key={idx}
-                  className=" m-2 border-2 flex flex-col items-center justify-center gap-2 w-50 h-60"
+                  className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-50 h-60"
                 >
+                  {ts.isOnline && (
+                    <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
+                      <div className="h-4 w-4 bg-green-600 rounded-full"></div>
+                      Online
+                    </div>
+                  )}
                   <Label className="w-full px-5">{ts.firstname}</Label>
                   <Label className="text-[11px]">{ts.email}</Label>
                   <div>
                     <div className="flex gap-2 flex-col">
                       <Label>Task:</Label>
                       {ts.task_title != '' ? (
-                        <>Not Doing anything!</>
-                      ) : (
                         <>{ts.task_title}</>
+                      ) : (
+                        <>Not Doing anything!</>
                       )}
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+            ) : (
+              <>No One is Online</>
+            )}
           </div>
         </div>
       </div>

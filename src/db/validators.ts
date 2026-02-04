@@ -39,6 +39,7 @@ export const checkLoginSchema = z.object({
 
 export const updateTaskSchema = z.object({
   title: z.string().min(5),
-  description: z.string(),
+  description: z.string().optional(),
   status: z.enum(['not_started', 'in_progress', 'done']),
+  userId: z.string(),
 });
