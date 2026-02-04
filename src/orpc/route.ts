@@ -324,6 +324,7 @@ export const endingMyTask = os
       .update(tasks)
       .set({
         status: 'done',
+        endsAt: new Date(),
       })
       .where(and(eq(tasks.userId, input.id), eq(tasks.id, input.taskId)));
 
