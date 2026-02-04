@@ -334,14 +334,14 @@ export const updateMyTask = os
   });
 
 export const startingMyTask = os
-  .input(z.object({ id: z.string() }))
+  .input(z.object({ id: z.string(), taskId: z.number() }))
   .handler(async ({ input }) => {
     const updateTask = await db
       .update(tasks)
       .set({
         status: 'in_progress',
       })
-      .where(eq(tasks.userId, input.id));
+      .where(and(eq(tasks.userId, input.id), eq(tasks.id, input.taskId)));
 
     if (updateMyTask) {
       return { success: 'Task in progress' };

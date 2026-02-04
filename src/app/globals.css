@@ -48,13 +48,37 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #e9e9e9;
+  --background: #dfe0e4;
+
+  --color-cerulean-50: #eaf6fa;
+  --color-cerulean-100: #d5edf6;
+  --color-cerulean-200: #abdbed;
+  --color-cerulean-300: #82c9e3;
+  --color-cerulean-400: #58b7da;
+  --color-cerulean-500: #2ea6d1;
+  --color-cerulean-600: #2584a7;
+  --color-cerulean-700: #1c637d;
+  --color-cerulean-800: #124254;
+  --color-cerulean-900: #09212a;
+  --color-cerulean-950: #06171d;
+
+  --color-mercury-50: #f6f7f8;
+  --color-mercury-100: #ebebee;
+  --color-mercury-200: #dfe0e4;
+  --color-mercury-300: #c3c6cd;
+  --color-mercury-400: #a6a9b4;
+  --color-mercury-500: #9093a1;
+  --color-mercury-600: #7f8191;
+  --color-mercury-700: #727383;
+  --color-mercury-800: #60606d;
+  --color-mercury-900: #4f5059;
+  --color-mercury-950: #333338;
 
   /* --test:#241e2c; */
   --foreground: oklch(0.13 0.028 261.692);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.13 0.028 261.692);
-  --popcustomover: #a8a5b4;
+  --popcustomover: #979caa;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.028 261.692);
   --primary: oklch(0.21 0.034 264.665);
@@ -85,11 +109,24 @@
 }
 
 .dark {
-  --background: oklch(31.904% 0.02919 248.794);
+  --background: #09212a;
   --foreground: oklch(0.985 0.002 247.839);
+
+  --color-cerulean-50: #eaf6fa;
+  --color-cerulean-100: #d5edf6;
+  --color-cerulean-200: #abdbed;
+  --color-cerulean-300: #82c9e3;
+  --color-cerulean-400: #58b7da;
+  --color-cerulean-500: #2ea6d1;
+  --color-cerulean-600: #2584a7;
+  --color-cerulean-700: #1c637d;
+  --color-cerulean-800: #124254;
+  --color-cerulean-900: #09212a;
+  --color-cerulean-950: #06171d;
+
   --card: oklch(0.21 0.034 264.665);
   --card-foreground: oklch(0.985 0.002 247.839);
-  --popcustomover: oklch(23.991% 0.02092 251.708);
+  --popcustomover: oklch(26.541% 0.02203 254.234);
   --popover: oklch(23.991% 0.02092 251.708);
   --popover-foreground: oklch(0.985 0.002 247.839);
   --primary: oklch(0.928 0.006 264.531);

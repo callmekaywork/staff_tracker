@@ -45,8 +45,9 @@ import {
 } from '@/components/ui/select';
 import { redirect } from 'next/navigation';
 import Loading from '@/app/loading';
-import Blackloader from '@/components/loaders/blackloader';
 import Whiteloader from '@/components/loaders/whiteloader';
+
+import { motion } from 'motion/react';
 
 export default function Whosonline() {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -188,11 +189,24 @@ export default function Whosonline() {
   };
 
   if (loading) {
-    return <Loading />;
+    return (
+      <motion.div
+        initial={{ opacity: 0.5, scale: 0.6 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full flex justify-center items-center"
+      >
+        <Loading />
+      </motion.div>
+    );
   }
 
   return (
-    <div className="w-full">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
+      className="w-full"
+    >
       <div className="flex flex-col gap-2 border-2 p-2 ">
         <div className="flex flex-row gap-4 items-center h-16">
           <Avatar>
@@ -509,6 +523,7 @@ export default function Whosonline() {
                             if (user) {
                               const updateTask = await orpc.tasks.startmytask({
                                 id: user.id,
+                                taskId: isUserTask[0].id,
                               });
 
                               toast.info(
@@ -571,18 +586,18 @@ export default function Whosonline() {
             </div>
           )}
         </div>
-        <div className="min-h-20 dark:bg-gray-800 border-2">
+        <div className="min-h-20 max-h-150 dark:bg-gray-800 border-2 ">
           <div className="grid grid-cols-2 md:grid-cols-5 grid-rows-auto">
             {isUsersOnline ? (
               isUsersOnline.map((ts, idx) => (
                 <div
                   key={idx}
-                  className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-36 sm:w-40 md:w-50 h-60"
+                  className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-36 sm:w-40 md:w-50 h-42 rounded-[10px] shadow-sm"
                 >
                   {ts.isOnline ? (
-                    <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
+                    <div className="absolute top-2 right-2 flex flex-row-reverse gap-2 items-center justify-center">
                       <div className="h-4 w-4 bg-green-600 rounded-full"></div>
-                      Online
+                      <span className="text-[12px]">Online</span>
                     </div>
                   ) : (
                     <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
@@ -590,13 +605,15 @@ export default function Whosonline() {
                       Offline
                     </div>
                   )}
-                  <Label className="w-full px-5">{ts.firstname}</Label>
-                  <Label className="text-[11px]">{ts.email}</Label>
-                  <div>
-                    <div className="flex gap-2 flex-col">
-                      <Label>Task:</Label>
+
+                  <div className="flex flex-col justify-center items-center bg-color-mercury-500 ">
+                    <div className="w-full px-2">
+                      <h1 className="font-semibold">{ts.firstname}</h1>
+                    </div>
+                    <div className="flex gap-2 flex-col bg-gray-300 dark:bg-slate-800 border-2 rounded-[10px] p-2 py-3">
+                      <Label className="text-2xl">Task:</Label>
                       {ts.task_title != '' ? (
-                        <div>
+                        <div className="min-h-15">
                           {ts.task_title}
                           <Label>status: {ts.task_status}</Label>
                         </div>
@@ -615,6 +632,6 @@ export default function Whosonline() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

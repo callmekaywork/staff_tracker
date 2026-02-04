@@ -86,7 +86,7 @@ export default function Task_report() {
             {/* your table code here */}
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
-                <tr className="bg-gray-100">
+                <tr className="bg-gray-100 dark:bg-gray-700 ">
                   <th className="border border-gray-300 px-2 py-2 text-left">
                     Email
                   </th>
@@ -109,7 +109,10 @@ export default function Task_report() {
               </thead>
               <tbody>
                 {isTasks.map((ind, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
+                  <tr
+                    key={idx}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-900"
+                  >
                     <td className="border border-gray-300 px-2 py-2">
                       {ind.email}
                     </td>
