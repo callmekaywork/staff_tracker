@@ -97,18 +97,18 @@ export default function Whosonline() {
     GetOnlineUser();
   }, []);
 
-  useEffect(() => {
-    async function GetUserTask() {
-      if (user) {
-        const res = await orpc.tasks.getmytask({ id: user.id });
-        setIsUserTask(res);
-      }
-    }
+  // useEffect(() => {
+  //   async function GetUserTask() {
+  //     if (user) {
+  //       const res = await orpc.tasks.getmytask({ id: user.id });
+  //       setIsUserTask(res);
+  //     }
+  //   }
 
-    if (isOnline === true) {
-      GetUserTask();
-    }
-  }, [isOnline]);
+  //   if (isOnline === true) {
+  //     GetUserTask();
+  //   }
+  // }, [isOnline]);
 
   const [showPassword, setShowPassword] = useState(false);
 
