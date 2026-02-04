@@ -14,7 +14,7 @@ import {
   checkLoginSchema,
   updateTaskSchema,
 } from '@/db/validators';
-import { eq, isNull, and, desc } from 'drizzle-orm';
+import { eq, isNull, and, desc, ne } from 'drizzle-orm';
 import { signIn, signOut } from '@/auth';
 import { auth } from '@/auth';
 
@@ -248,7 +248,13 @@ export const whosLoggedIn = os.handler(async () => {
     })
     .from(users)
     .leftJoin(userStatus, eq(users.id, userStatus.userId))
-    .leftJoin(tasks, eq(users.id, tasks.userId))
+    .leftJoin(
+      tasks,
+      and(
+        eq(users.id, tasks.userId),
+        ne(tasks.status, 'done') // status is NOT "done"
+      )
+    )
     .where(eq(userStatus.isOnline, true));
 
   return result;
@@ -270,14 +276,30 @@ export const getMyTask = os
 export const updateMyTask = os
   .input(updateTaskSchema)
   .handler(async ({ input }) => {
-    const updateTask = await db.insert(tasks).values({
-      title: input.title,
-      description: input.description,
-      status: input.status,
-      userId: input.userId,
-    });
+    const latestTask = await db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.userId, input.userId),
+          ne(tasks.status, 'done') // status is NOT "done"
+        )
+      )
+      .orderBy(desc(tasks.startedAt)) // or desc(tasks.id)
+      .limit(1);
 
-    return { success: 'Task Inserted' };
+    if (latestTask.length < 1) {
+      await db.insert(tasks).values({
+        title: input.title,
+        description: input.description,
+        status: input.status,
+        userId: input.userId,
+      });
+
+      return { success: 'Task Inserted' };
+    } else {
+      return { error: 'You have no open task | create a new task' };
+    }
   });
 
 export const startingMyTask = os

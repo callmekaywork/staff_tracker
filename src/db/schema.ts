@@ -173,5 +173,6 @@ export const tasks = pgTable('tasks', {
 
   endsAt: timestamp('ends_at', { withTimezone: true }),
 
-  status: text('status').default('in_progress').notNull(), // suggestion: track task state
+  status: text('status').default('not_started').notNull(), // suggestion: track task state
+  priority: text('priority').default('low').notNull(),
 });

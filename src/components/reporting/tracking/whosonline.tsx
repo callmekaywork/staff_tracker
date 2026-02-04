@@ -47,6 +47,9 @@ import { redirect } from 'next/navigation';
 
 export default function Whosonline() {
   const [loginOpen, setLoginOpen] = useState(false);
+
+  const [updateTaskOpen, setUpdateTaskOpen] = useState(false);
+
   const [isUsersOnline, setIsUsersOnline] = useState<WhosOnlineObjectType[]>(
     []
   );
@@ -145,9 +148,17 @@ export default function Whosonline() {
           userId: user.id,
         });
 
-        toast.info(` successfull Task Updated`, {
-          position: 'top-center',
-        });
+        if (checkEmail.error === undefined) {
+          toast.info(`${checkEmail.success} successfull Task Updated`, {
+            position: 'top-center',
+          });
+
+          setUpdateTaskOpen(false);
+        } else {
+          toast.info(`${checkEmail.error}`, {
+            position: 'top-center',
+          });
+        }
       }
     } catch (error) {
       toast.info(`${error} Something went wrong`, {
@@ -295,7 +306,7 @@ export default function Whosonline() {
             <div>
               <h2 className="p-2">{user?.email}</h2>
               <div>
-                <Dialog>
+                <Dialog open={updateTaskOpen} onOpenChange={setUpdateTaskOpen}>
                   <DialogTrigger
                     className={`${buttonVariants({ variant: 'elevated' })} m-2 w-50 cursor-pointer`}
                   >
