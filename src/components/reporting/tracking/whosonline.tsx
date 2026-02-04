@@ -43,6 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { redirect } from 'next/navigation';
 
 export default function Whosonline() {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -50,7 +51,7 @@ export default function Whosonline() {
     []
   );
 
-  const [isUserTask, setIsUserTask] = useState<userTaskType>();
+  const [isUserTask, setIsUserTask] = useState<userTaskType[]>([]);
 
   const { isOnline, user } = useCheckUser();
 
@@ -75,25 +76,39 @@ export default function Whosonline() {
   });
 
   useEffect(() => {
+    console.log('run after');
     async function GetOnlineUser() {
       const res = await orpc.tasks.whosonline();
       setIsUsersOnline(res);
 
-      if (user) {
-        const res = await orpc.tasks.getmytask({ id: user.id });
+      // console.log(user?.email);
+      // console.log(res);
 
-        setIsUserTask(res);
+      // if (user) {
+      //   const res = await orpc.tasks.getmytask({ id: user.id });
 
-        console.log(res);
-      }
+      //   setIsUserTask(res);
+      // }
     }
 
     // async function GetUserTask() {
     // }
 
     GetOnlineUser();
-    // GetUserTask();
   }, []);
+
+  useEffect(() => {
+    async function GetUserTask() {
+      if (user) {
+        const res = await orpc.tasks.getmytask({ id: user.id });
+        setIsUserTask(res);
+      }
+    }
+
+    if (isOnline === true) {
+      GetUserTask();
+    }
+  }, [isOnline]);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -395,25 +410,58 @@ export default function Whosonline() {
 
                 {isUserTask && (
                   <div>
-                    {isUserTask.status === 'not_started' && (
+                    {isUserTask[0].status === 'not_started' ? (
                       <div>
                         <Button
                           variant={'elevated'}
                           className="h-14 m-2  w-50 bg-green-700 text-white cursor-pointer"
+                          onClick={async () => {
+                            if (user) {
+                              const updateTask = await orpc.tasks.startmytask({
+                                id: user.id,
+                              });
+
+                              toast.info(
+                                `${updateTask?.success} | successfully `,
+                                {
+                                  position: 'top-center',
+                                }
+                              );
+
+                              // window.location.reload();
+                            }
+                          }}
                         >
                           Iam starting my task
                         </Button>
                       </div>
-                    )}
-                    {isUserTask.status === 'in_progress' && (
+                    ) : isUserTask[0].status === 'in_progress' ? (
                       <div>
                         <Button
                           variant={'elevated'}
-                          className="h-14 bg-red-700 text-white cursor-pointer"
+                          className="h-14 m-2 w-50 bg-red-700 text-white cursor-pointer"
+                          onClick={async () => {
+                            if (user) {
+                              const updateTask = await orpc.tasks.endmytask({
+                                id: user.id,
+                              });
+
+                              toast.info(
+                                `${updateTask?.success} | successfully `,
+                                {
+                                  position: 'top-center',
+                                }
+                              );
+
+                              // window.location.reload();
+                            }
+                          }}
                         >
                           Iam done with my Task
                         </Button>
                       </div>
+                    ) : (
+                      <div className="m-2">You have no running task</div>
                     )}
                   </div>
                 )}

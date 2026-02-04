@@ -29,7 +29,7 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   password: text('password').notNull(),
   role: text('role')
-    .$type<'admin' | 'staff' | 'user' | 'boss'>()
+    .$type<'admin' | 'staff' | 'user'>()
     .notNull()
     .default('staff'),
   image: text('image'),

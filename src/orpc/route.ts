@@ -205,7 +205,7 @@ export const loginOutput = os
         )
         .limit(1);
 
-      if (checkStatus) {
+      if (checkStatus.length > 0) {
         await db
           .update(userStatus)
           .set({ isOnline: true })
@@ -249,7 +249,7 @@ export const whosLoggedIn = os.handler(async () => {
     .from(users)
     .leftJoin(userStatus, eq(users.id, userStatus.userId))
     .leftJoin(tasks, eq(users.id, tasks.userId))
-    .where(and(eq(userStatus.isOnline, true), isNull(tasks.endsAt)));
+    .where(eq(userStatus.isOnline, true));
 
   return result;
 });
@@ -264,7 +264,7 @@ export const getMyTask = os
       .orderBy(desc(tasks.startedAt))
       .limit(1);
 
-    return latestTask[0] ?? null;
+    return latestTask ?? null;
   });
 
 export const updateMyTask = os
@@ -289,6 +289,25 @@ export const startingMyTask = os
         status: 'in_progress',
       })
       .where(eq(tasks.userId, input.id));
+
+    if (updateMyTask) {
+      return { success: 'Task in progress' };
+    }
+  });
+
+export const endingMyTask = os
+  .input(z.object({ id: z.string() }))
+  .handler(async ({ input }) => {
+    const updateTask = await db
+      .update(tasks)
+      .set({
+        status: 'done',
+      })
+      .where(eq(tasks.userId, input.id));
+
+    if (updateMyTask) {
+      return { success: 'Task is now complete' };
+    }
   });
 
 export const router = {
@@ -316,6 +335,8 @@ export const router = {
     whosonline: whosLoggedIn,
     updatetask: updateMyTask,
     getmytask: getMyTask,
+    startmytask: startingMyTask,
+    endmytask: endingMyTask,
   },
   // server/auth.ts
 };
