@@ -76,7 +76,6 @@ export default function Whosonline() {
   });
 
   useEffect(() => {
-    console.log('run after');
     async function GetOnlineUser() {
       const res = await orpc.tasks.whosonline();
       setIsUsersOnline(res);
@@ -97,18 +96,18 @@ export default function Whosonline() {
     GetOnlineUser();
   }, []);
 
-  // useEffect(() => {
-  //   async function GetUserTask() {
-  //     if (user) {
-  //       const res = await orpc.tasks.getmytask({ id: user.id });
-  //       setIsUserTask(res);
-  //     }
-  //   }
+  useEffect(() => {
+    async function GetUserTask() {
+      if (user) {
+        const res = await orpc.tasks.getmytask({ id: user.id });
+        setIsUserTask(res);
+      }
+    }
 
-  //   if (isOnline === true) {
-  //     GetUserTask();
-  //   }
-  // }, [isOnline]);
+    if (isOnline === true) {
+      GetUserTask();
+    }
+  }, [isOnline]);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -408,7 +407,7 @@ export default function Whosonline() {
                   </DialogContent>
                 </Dialog>
 
-                {isUserTask && (
+                {isUserTask.length > 0 && (
                   <div>
                     {isUserTask[0].status === 'not_started' ? (
                       <div>
