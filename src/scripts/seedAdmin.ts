@@ -21,7 +21,7 @@ async function seedSuperAdmin() {
     await db.insert(users).values({
       firstname: 'Khotso',
       lastname: 'Nyokong',
-      email: 'callmekay@gmail.com',
+      email: 'callmekaywork@gmail.com',
       role: 'admin',
       password: `${hash}`,
     });

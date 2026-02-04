@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { db } from '@/db';
-import { accounts, assistanceRecords, users, userStatus } from '@/db/schema';
+import {
+  accounts,
+  assistanceRecords,
+  tasks,
+  users,
+  userStatus,
+} from '@/db/schema';
 import type { IncomingHttpHeaders } from 'node:http';
 import { ORPCError, os } from '@orpc/server';
 import { assistanceRecordSchema, checkLoginSchema } from '@/db/validators';
@@ -142,6 +148,8 @@ export const loginOutput = os
   .handler(async ({ input }) => {
     const { email, password } = input;
 
+    console.log(input);
+
     // 1. Validate user
     const user = await db
       .select()
@@ -208,6 +216,11 @@ export const whosLoggedIn = os.handler(async () => {
       email: users.email,
       firstname: users.firstname,
       role: users.role,
+      task_title: tasks.title,
+      task_desc: tasks.description,
+      task_started: tasks.startedAt,
+      task_status: tasks.status,
+      task_ended: tasks.endsAt,
       company_position: userStatus.company_position,
       loggedInAt: userStatus.loggedInAt,
       loggedOutAt: userStatus.loggedOutAt,
@@ -215,6 +228,7 @@ export const whosLoggedIn = os.handler(async () => {
     })
     .from(users)
     .leftJoin(userStatus, eq(users.id, userStatus.userId))
+    .leftJoin(tasks, eq(users.id, tasks.userId))
     .where(eq(userStatus.isOnline, true));
 
   return result;

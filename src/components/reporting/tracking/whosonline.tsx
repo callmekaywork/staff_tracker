@@ -7,6 +7,7 @@ import Link from 'next/link';
 import React, { useActionState, useEffect, useState } from 'react';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -14,7 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { checkLoginSchema } from '@/db/validators';
+import { checkLoginSchema, updateTaskSchema } from '@/db/validators';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Field,
@@ -35,9 +36,16 @@ import { loginAction } from './loginaction';
 import { refresh } from 'next/cache';
 import { WhosOnlineObjectType } from '@/types/next-auth';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function Whosonline() {
-  const [state, formAction, isPending] = useActionState(loginAction, null);
+  const [loginOpen, setLoginOpen] = useState(false);
   const [isUsersOnline, setIsUsersOnline] = useState<WhosOnlineObjectType[]>(
     []
   );
@@ -54,7 +62,13 @@ export default function Whosonline() {
     },
   });
 
-  const taskForm = useForm({});
+  const taskForm = useForm({
+    resolver: zodResolver(updateTaskSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+    },
+  });
 
   useEffect(() => {
     async function GetOnlineUser() {
@@ -67,7 +81,9 @@ export default function Whosonline() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const { control, handleSubmit } = loginForm;
+  const { control: loginControl, handleSubmit: loginFormSubmitHandler } =
+    loginForm;
+  const { control: taskControl, handleSubmit: taskHandlerSubmit } = taskForm;
 
   const loginFormSubmit = async (data: z.infer<typeof checkLoginSchema>) => {
     // console.log('Form submitted:', data);
@@ -77,6 +93,8 @@ export default function Whosonline() {
       toast.info(` successfull login`, {
         position: 'top-left',
       });
+
+      setLoginOpen(false);
     } catch (error) {
       toast.info(`${error} loggin in - Please try again`, {
         position: 'top-left',
@@ -123,8 +141,8 @@ export default function Whosonline() {
                 Check your email?
               </Link> */}
 
-              <Dialog>
-                <DialogTrigger className="text-4xl">
+              <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
+                <DialogTrigger className="text-4xl cursor-pointer">
                   Start my work day (Login)
                 </DialogTrigger>
                 <DialogContent>
@@ -136,13 +154,13 @@ export default function Whosonline() {
                     <DialogContent>
                       <div>
                         <form
-                          onSubmit={handleSubmit(loginFormSubmit)}
+                          onSubmit={loginFormSubmitHandler(loginFormSubmit)}
                           // action={formAction}
                           className="flex flex-col w-full space-y-4"
                         >
                           <FieldGroup>
                             <Controller
-                              control={control}
+                              control={loginControl}
                               name="email"
                               render={({ field, fieldState }) => (
                                 <Field>
@@ -164,7 +182,7 @@ export default function Whosonline() {
                             />
 
                             <Controller
-                              control={control}
+                              control={loginControl}
                               name="password"
                               render={({ field, fieldState }) => (
                                 <Field>
@@ -208,6 +226,7 @@ export default function Whosonline() {
                           </FieldGroup>
 
                           {/* Submit */}
+                          {/* <DialogClose></DialogClose> */}
                           <Button
                             className="mt-1 h-16 cursor-pointer bg-gray-500 text-white"
                             variant={'elevated'}
@@ -228,7 +247,7 @@ export default function Whosonline() {
               <div>
                 <Dialog>
                   <DialogTrigger
-                    className={`${buttonVariants({ variant: 'elevated' })} m-2`}
+                    className={`${buttonVariants({ variant: 'elevated' })} m-2 w-50`}
                   >
                     Update my task
                   </DialogTrigger>
@@ -236,36 +255,102 @@ export default function Whosonline() {
                     <DialogHeader>
                       <DialogTitle>What are you busy with today</DialogTitle>
                       <DialogDescription>Updating my task</DialogDescription>
-                      <DialogContent>
-                        <div>
-                          <form>
-                            <FieldGroup>
-                              <Controller
-                                control={control}
-                                name="email"
-                                render={({ field, fieldState }) => (
-                                  <Field>
-                                    <FieldLabel htmlFor={field.name}>
-                                      Email:
-                                    </FieldLabel>
-                                    <Input
-                                      {...field}
-                                      id={field.name}
-                                      type="email"
-                                      placeholder="Enter your company email...."
-                                      aria-invalid={fieldState.invalid}
-                                    />
-                                    {fieldState.invalid && (
-                                      <FieldError errors={[fieldState.error]} />
-                                    )}
-                                  </Field>
-                                )}
-                              />
-                            </FieldGroup>
-                          </form>
-                        </div>
-                      </DialogContent>
                     </DialogHeader>
+                    <div>
+                      <form className="flex flex-col gap-5">
+                        <FieldGroup>
+                          <Controller
+                            control={taskControl}
+                            name="title"
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel htmlFor={field.name}>
+                                  Title:
+                                </FieldLabel>
+                                <Input
+                                  {...field}
+                                  id={field.name}
+                                  type="text"
+                                  placeholder="Enter your task title...."
+                                  aria-invalid={fieldState.invalid}
+                                />
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                          <Controller
+                            control={taskControl}
+                            name="description"
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel htmlFor={field.name}>
+                                  Description:
+                                </FieldLabel>
+                                <Input
+                                  {...field}
+                                  id={field.name}
+                                  type="text"
+                                  placeholder="Enter your task description...."
+                                  aria-invalid={fieldState.invalid}
+                                />
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                        </FieldGroup>
+                        <FieldGroup>
+                          <Controller
+                            control={taskControl}
+                            name="status"
+                            render={({ field, fieldState }) => (
+                              <Field>
+                                <FieldLabel>Status: </FieldLabel>
+
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger className="h-14">
+                                    <SelectValue
+                                      className="h-14"
+                                      placeholder="Select Status Type"
+                                    />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem
+                                      className="h-14"
+                                      value="not_started"
+                                    >
+                                      Not Started
+                                    </SelectItem>
+                                    <SelectItem
+                                      className="h-14"
+                                      value="in_progress"
+                                    >
+                                      In Progress
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                        </FieldGroup>
+                        <Button
+                          className="mt-1 h-16 cursor-pointer bg-gray-500 text-white w-full"
+                          variant={'elevated'}
+                          type="submit"
+                        >
+                          Update my task
+                        </Button>
+                      </form>
+                    </div>
                   </DialogContent>
                 </Dialog>
               </div>
@@ -275,16 +360,22 @@ export default function Whosonline() {
         <div className="min-h-20 dark:bg-gray-800 border-2">
           <div className="grid grid-rows-auto">
             {isUsersOnline &&
-              isUsersOnline.map((content, idx) => (
+              isUsersOnline.map((ts, idx) => (
                 <div
                   key={idx}
                   className=" m-2 border-2 flex flex-col items-center justify-center gap-2 w-50 h-60"
                 >
-                  <Label>{content.firstname}</Label>
-                  <Label>{content.email}</Label>
+                  <Label className="w-full px-5">{ts.firstname}</Label>
+                  <Label className="text-[11px]">{ts.email}</Label>
                   <div>
-                    <Label>Task:</Label>
-                    <Label>Building the Task System</Label>
+                    <div className="flex gap-2 flex-col">
+                      <Label>Task:</Label>
+                      {ts.task_title != '' ? (
+                        <>Not Doing anything!</>
+                      ) : (
+                        <>{ts.task_title}</>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

@@ -67,6 +67,11 @@ type WhosOnlineObjectType = {
   email: string;
   firstname: string | null;
   role: 'user' | 'admin' | 'staff';
+  task_title: string | null;
+  task_desc: string | null;
+  task_started: Date | null;
+  task_status: string | null;
+  task_ended: Date | null;
   company_position: string | null;
   loggedInAt: Date | null;
   loggedOutAt: Date | null;

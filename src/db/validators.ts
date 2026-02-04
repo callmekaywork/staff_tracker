@@ -36,3 +36,9 @@ export const checkLoginSchema = z.object({
   email: z.string(),
   password: z.string(),
 });
+
+export const updateTaskSchema = z.object({
+  title: z.string().min(5),
+  description: z.string(),
+  status: z.enum(['not_started', 'in_progress', 'done']),
+});
