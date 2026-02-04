@@ -16,14 +16,6 @@ export default function Home() {
       <main className="flex min-h-screen w-full md:max-w-4xl lg:max-w-6xl flex-col items-center  py-32 px-5 sm:items-start transition-all transition-normal delay-75 ease-in-out">
         {/* <Tabs /> */}
         <Whosonline />
-
-        <div className="flex w-full flex-col mt-10 mb-2 ">
-          <div className="mb-5">
-            <Label className="text-6xl">Literacy Project</Label>
-          </div>
-          <Reportform />
-          <Reporttable />
-        </div>
       </main>
     </div>
   );

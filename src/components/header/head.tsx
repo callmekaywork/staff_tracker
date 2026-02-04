@@ -16,8 +16,9 @@ export default function Header() {
             Home
           </Link>
         </div>
-        <nav className="flex flex-row items-center justify-center ">
+        <nav className="flex flex-row items-center justify-center gap-5">
           <DarkmodeToggle />
+          <Link href={'/literacyproject'}>Literacy Project</Link>
         </nav>
       </div>
     </div>

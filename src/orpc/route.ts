@@ -14,7 +14,7 @@ import {
   checkLoginSchema,
   updateTaskSchema,
 } from '@/db/validators';
-import { eq, isNull, and } from 'drizzle-orm';
+import { eq, isNull, and, desc } from 'drizzle-orm';
 import { signIn, signOut } from '@/auth';
 import { auth } from '@/auth';
 
@@ -254,6 +254,19 @@ export const whosLoggedIn = os.handler(async () => {
   return result;
 });
 
+export const getMyTask = os
+  .input(z.object({ id: z.string() }))
+  .handler(async ({ input }) => {
+    const latestTask = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.userId, input.id))
+      .orderBy(desc(tasks.startedAt))
+      .limit(1);
+
+    return latestTask[0] ?? null;
+  });
+
 export const updateMyTask = os
   .input(updateTaskSchema)
   .handler(async ({ input }) => {
@@ -265,6 +278,17 @@ export const updateMyTask = os
     });
 
     return { success: 'Task Inserted' };
+  });
+
+export const startingMyTask = os
+  .input(z.object({ id: z.string() }))
+  .handler(async ({ input }) => {
+    const updateTask = await db
+      .update(tasks)
+      .set({
+        status: 'in_progress',
+      })
+      .where(eq(tasks.userId, input.id));
   });
 
 export const router = {
@@ -280,7 +304,7 @@ export const router = {
           .where(eq(userStatus.userId, input.id));
         signOut();
 
-        redirect('/');
+        // redirect('/');
       }),
   },
   reports: {
@@ -291,6 +315,7 @@ export const router = {
   tasks: {
     whosonline: whosLoggedIn,
     updatetask: updateMyTask,
+    getmytask: getMyTask,
   },
   // server/auth.ts
 };

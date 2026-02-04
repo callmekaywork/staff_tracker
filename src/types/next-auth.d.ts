@@ -2,7 +2,7 @@
 
 import NextAuth, { DefaultSession } from 'next-auth';
 
-type UserRole = 'admin' | 'staff';
+type UserRole = 'admin' | 'staff' | 'boss';
 
 type UserData = {
   id: string;
@@ -66,7 +66,7 @@ type WhosOnlineObjectType = {
   id: string;
   email: string;
   firstname: string | null;
-  role: 'user' | 'admin' | 'staff';
+  role: 'user' | 'admin' | 'staff' | 'boss';
   task_title: string | null;
   task_desc: string | null;
   task_started: Date | null;
@@ -76,4 +76,14 @@ type WhosOnlineObjectType = {
   loggedInAt: Date | null;
   loggedOutAt: Date | null;
   isOnline: boolean | null;
+};
+
+type userTaskType = {
+  id: number;
+  userId: string;
+  title: string;
+  description: string | null;
+  startedAt: Date;
+  endsAt: Date | null;
+  status: string;
 };

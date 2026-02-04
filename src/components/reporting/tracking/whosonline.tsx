@@ -34,7 +34,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { signIn, signOut } from '@/auth';
 import { loginAction } from './loginaction';
 import { refresh } from 'next/cache';
-import { WhosOnlineObjectType } from '@/types/next-auth';
+import { userTaskType, WhosOnlineObjectType } from '@/types/next-auth';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -49,6 +49,8 @@ export default function Whosonline() {
   const [isUsersOnline, setIsUsersOnline] = useState<WhosOnlineObjectType[]>(
     []
   );
+
+  const [isUserTask, setIsUserTask] = useState<userTaskType>();
 
   const { isOnline, user } = useCheckUser();
 
@@ -76,9 +78,21 @@ export default function Whosonline() {
     async function GetOnlineUser() {
       const res = await orpc.tasks.whosonline();
       setIsUsersOnline(res);
+
+      if (user) {
+        const res = await orpc.tasks.getmytask({ id: user.id });
+
+        setIsUserTask(res);
+
+        console.log(res);
+      }
     }
 
+    // async function GetUserTask() {
+    // }
+
     GetOnlineUser();
+    // GetUserTask();
   }, []);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -269,7 +283,7 @@ export default function Whosonline() {
               <div>
                 <Dialog>
                   <DialogTrigger
-                    className={`${buttonVariants({ variant: 'elevated' })} m-2 w-50`}
+                    className={`${buttonVariants({ variant: 'elevated' })} m-2 w-50 cursor-pointer`}
                   >
                     Update my task
                   </DialogTrigger>
@@ -378,6 +392,31 @@ export default function Whosonline() {
                     </div>
                   </DialogContent>
                 </Dialog>
+
+                {isUserTask && (
+                  <div>
+                    {isUserTask.status === 'not_started' && (
+                      <div>
+                        <Button
+                          variant={'elevated'}
+                          className="h-14 m-2  w-50 bg-green-700 text-white cursor-pointer"
+                        >
+                          Iam starting my task
+                        </Button>
+                      </div>
+                    )}
+                    {isUserTask.status === 'in_progress' && (
+                      <div>
+                        <Button
+                          variant={'elevated'}
+                          className="h-14 bg-red-700 text-white cursor-pointer"
+                        >
+                          Iam done with my Task
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -407,7 +446,10 @@ export default function Whosonline() {
                     <div className="flex gap-2 flex-col">
                       <Label>Task:</Label>
                       {ts.task_title != '' ? (
-                        <>{ts.task_title}</>
+                        <div>
+                          {ts.task_title}
+                          <Label>status: {ts.task_status}</Label>
+                        </div>
                       ) : (
                         <>
                           <label>Not Doing anything!</label>
