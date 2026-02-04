@@ -14,7 +14,7 @@ import {
   checkLoginSchema,
   updateTaskSchema,
 } from '@/db/validators';
-import { eq, isNull, and, desc, ne } from 'drizzle-orm';
+import { eq, isNull, and, desc, ne, sql } from 'drizzle-orm';
 import { signIn, signOut } from '@/auth';
 import { auth } from '@/auth';
 
@@ -241,6 +241,7 @@ export const whosLoggedIn = os.handler(async () => {
       task_started: tasks.startedAt,
       task_status: tasks.status,
       task_ended: tasks.endsAt,
+      task_priority: tasks.priority,
       company_position: userStatus.company_position,
       loggedInAt: userStatus.loggedInAt,
       loggedOutAt: userStatus.loggedOutAt,
@@ -256,6 +257,35 @@ export const whosLoggedIn = os.handler(async () => {
       )
     )
     .where(eq(userStatus.isOnline, true));
+
+  return result;
+});
+
+export const dailyTracker = os.handler(async () => {
+  // Example: get user + status by userId
+  const result = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      firstname: users.firstname,
+      role: users.role,
+      task_title: tasks.title,
+      task_desc: tasks.description,
+      task_started: tasks.startedAt,
+      task_status: tasks.status,
+      task_ended: tasks.endsAt,
+      task_priority: tasks.priority,
+      company_position: userStatus.company_position,
+      loggedInAt: userStatus.loggedInAt,
+      loggedOutAt: userStatus.loggedOutAt,
+      isOnline: userStatus.isOnline,
+      task_day: sql`date_trunc('day', ${tasks.startedAt})`.as('task_day'),
+    })
+    .from(users)
+    .leftJoin(userStatus, eq(users.id, userStatus.userId))
+    .leftJoin(tasks, eq(users.id, tasks.userId))
+    .where(eq(userStatus.isOnline, true))
+    .orderBy(sql`task_day desc`);
 
   return result;
 });
@@ -360,6 +390,7 @@ export const router = {
     getmytask: getMyTask,
     startmytask: startingMyTask,
     endmytask: endingMyTask,
+    groupedtask: dailyTracker,
   },
   // server/auth.ts
 };

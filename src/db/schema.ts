@@ -170,6 +170,7 @@ export const tasks = pgTable('tasks', {
   startedAt: timestamp('started_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
+  task_day: text('task_day'),
 
   endsAt: timestamp('ends_at', { withTimezone: true }),
 
