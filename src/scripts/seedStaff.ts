@@ -66,7 +66,7 @@ export const staffAccounts = [
     password: 'Thembaloyolo@000',
   },
   {
-    firstname: 'Molotjwa',
+    firstname: 'Molotja',
     lastname: 'Mothapo',
     email: 'ngwako@deesholding.co.za',
     password: 'Molotjwa@000',

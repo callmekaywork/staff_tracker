@@ -149,7 +149,9 @@ export default function Whosonline() {
         {isOnline && (
           <Button
             onClick={async () => {
-              await orpc.auth.signout();
+              if (user) {
+                await orpc.auth.signout({ id: user.id });
+              }
             }}
           >
             Sign us Out
@@ -382,12 +384,12 @@ export default function Whosonline() {
           )}
         </div>
         <div className="min-h-20 dark:bg-gray-800 border-2">
-          <div className="grid grid-rows-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 grid-rows-auto">
             {isUsersOnline ? (
               isUsersOnline.map((ts, idx) => (
                 <div
                   key={idx}
-                  className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-50 h-60"
+                  className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-36 sm:w-40 md:w-50 h-60"
                 >
                   {ts.isOnline && (
                     <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
@@ -403,7 +405,9 @@ export default function Whosonline() {
                       {ts.task_title != '' ? (
                         <>{ts.task_title}</>
                       ) : (
-                        <>Not Doing anything!</>
+                        <>
+                          <label>Not Doing anything!</label>
+                        </>
                       )}
                     </div>
                   </div>

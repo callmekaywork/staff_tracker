@@ -255,9 +255,15 @@ export const router = {
   auth: {
     email_check: authCheckemail,
     login: loginOutput,
-    signout: os.handler(async () => {
-      signOut();
-    }),
+    signout: os
+      .input(z.object({ id: z.string() }))
+      .handler(async ({ input }) => {
+        await db
+          .update(userStatus)
+          .set({ isOnline: false })
+          .where(eq(userStatus.userId, input.id));
+        signOut();
+      }),
   },
   reports: {
     create: createReport,
