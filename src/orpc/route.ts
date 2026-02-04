@@ -324,6 +324,7 @@ export const updateMyTask = os
         description: input.description,
         status: input.status,
         userId: input.userId,
+        priority: input.priority,
       });
 
       return { success: 'Task Inserted' };
