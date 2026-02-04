@@ -45,6 +45,8 @@ import {
 } from '@/components/ui/select';
 import { redirect } from 'next/navigation';
 import Loading from '@/app/loading';
+import Blackloader from '@/components/loaders/blackloader';
+import Whiteloader from '@/components/loaders/whiteloader';
 
 export default function Whosonline() {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -124,6 +126,7 @@ export default function Whosonline() {
 
   const loginFormSubmit = async (data: z.infer<typeof checkLoginSchema>) => {
     // console.log('Form submitted:', data);
+    setIsForcedLoading(true);
     try {
       const checkEmail = await orpc.auth.login(data);
 
@@ -131,12 +134,17 @@ export default function Whosonline() {
         position: 'top-center',
       });
 
-      setLoginOpen(false);
+      setTimeout(() => {
+        setLoginOpen(false);
+        setIsForcedLoading(false);
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       toast.info(`${error} loggin in - Please try again`, {
         position: 'top-left',
       });
       console.log(error);
+      setIsForcedLoading(false);
     }
   };
 
@@ -179,7 +187,7 @@ export default function Whosonline() {
     }
   };
 
-  if (loading || isForcedLoading) {
+  if (loading) {
     return <Loading />;
   }
 
@@ -204,11 +212,20 @@ export default function Whosonline() {
           <Button
             onClick={async () => {
               if (user) {
+                setIsForcedLoading(true);
+
                 await orpc.auth.signout({ id: user.id });
+
+                setTimeout(() => {
+                  setLoginOpen(false);
+                  setIsForcedLoading(false);
+                  window.location.reload();
+                }, 3000);
               }
             }}
+            className="cursor-pointer"
           >
-            Sign us Out
+            {isForcedLoading === true ? <Whiteloader /> : 'Sign Yourself Out'}
           </Button>
         )}
 
@@ -308,7 +325,11 @@ export default function Whosonline() {
                             variant={'elevated'}
                             type="submit"
                           >
-                            Check my email
+                            {isForcedLoading === true ? (
+                              <Whiteloader />
+                            ) : (
+                              'Check my email'
+                            )}
                           </Button>
                         </form>
                       </div>
@@ -466,7 +487,11 @@ export default function Whosonline() {
                           variant={'elevated'}
                           type="submit"
                         >
-                          Update my task
+                          {isForcedLoading === true ? (
+                            <Whiteloader />
+                          ) : (
+                            'Update my task'
+                          )}
                         </Button>
                       </form>
                     </div>
