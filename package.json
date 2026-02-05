@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --turbopack ",
+    "build": "next build --turbopack && tsx src/scripts/seedStaff.ts",
     "lint": "eslint",
     "start": "pnpm run db:migrate && next start",
     "db:migrate": "drizzle-kit generate && drizzle-kit push ",

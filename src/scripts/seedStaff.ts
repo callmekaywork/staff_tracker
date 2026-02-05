@@ -119,6 +119,12 @@ export const staffAccounts = [
     email: 'tiyiselani@deesholding.co.za',
     password: 'Tiyiselani@000',
   },
+  {
+    firstname: 'Mathibedi',
+    lastname: 'Mohapi',
+    email: 'mohapi@deesholding.co.za',
+    password: 'mohapi9740',
+  },
 ];
 
 async function seedStaff() {
