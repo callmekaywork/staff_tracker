@@ -1,5 +1,6 @@
 import Header from '@/components/header/head';
 import { Onlinetoast } from '@/components/header/onlinetoast';
+import Userprofile from '@/components/profile/userprofile';
 import Reportform from '@/components/reporting/report-form';
 import Reporttable from '@/components/reporting/report-table';
 import Tabs from '@/components/reporting/tabs';
@@ -16,6 +17,7 @@ export default function Home() {
       {/* <Onlinetoast /> */}
       <main className="flex min-h-screen w-full md:max-w-4xl lg:max-w-6xl flex-col items-center py-10 px-5 sm:items-start transition-all transition-normal delay-75 ease-in-out">
         {/* <Tabs /> */}
+        <Userprofile />
         <Whosonline />
         <Task_report />
       </main>

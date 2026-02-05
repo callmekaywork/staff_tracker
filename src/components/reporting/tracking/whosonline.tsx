@@ -212,27 +212,6 @@ export default function Whosonline() {
       <Toaster />
 
       <div className="my-5 flex gap-2 flex-col">
-        {isOnline && (
-          <Button
-            onClick={async () => {
-              if (user) {
-                setIsForcedLoading(true);
-
-                await orpc.auth.signout({ id: user.id });
-
-                setTimeout(() => {
-                  setLoginOpen(false);
-                  setIsForcedLoading(false);
-                  window.location.reload();
-                }, 3000);
-              }
-            }}
-            className="cursor-pointer"
-          >
-            {isForcedLoading === true ? <Whiteloader /> : 'Sign Yourself Out'}
-          </Button>
-        )}
-
         <div className="min-h-20 dark:bg-gray-800 border-2">
           {!isOnline ? (
             <div className="w-full flex flex-col min-h-30 justify-center items-center gap-2">
