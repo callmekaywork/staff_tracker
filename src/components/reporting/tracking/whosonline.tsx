@@ -43,7 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
 import Whiteloader from '@/components/loaders/whiteloader';
 
@@ -57,6 +57,8 @@ export default function Whosonline() {
   const [isUsersOnline, setIsUsersOnline] = useState<WhosOnlineObjectType[]>(
     []
   );
+
+  const router = useRouter();
 
   const [isUserTask, setIsUserTask] = useState<userTaskType[]>([]);
 

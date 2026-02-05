@@ -200,12 +200,15 @@ export const loginOutput = os
       const checkStatus = await db
         .select()
         .from(userStatus)
-        .where(
-          and(eq(userStatus.userId, user.id), eq(userStatus.isOnline, false))
-        )
+        .where(eq(userStatus.userId, user.id))
         .limit(1);
 
-      if (checkStatus.length > 0) {
+      if (checkStatus.length > 0 && checkStatus[0].isOnline === false) {
+        await db
+          .update(userStatus)
+          .set({ isOnline: true })
+          .where(eq(userStatus.userId, user.id));
+      } else if (checkStatus.length > 0 && checkStatus[0].isOnline === true) {
         await db
           .update(userStatus)
           .set({ isOnline: true })

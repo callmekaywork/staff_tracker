@@ -95,7 +95,7 @@ export const {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 9 * 60 * 60, // 9 hours
+        maxAge: 9 * 60 * 60, // 9 hours 2026-02-05T15:42:55.909Z
       },
     },
   },
