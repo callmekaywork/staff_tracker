@@ -14,7 +14,7 @@ import {
   checkLoginSchema,
   updateTaskSchema,
 } from '@/db/validators';
-import { eq, isNull, and, desc, ne, sql } from 'drizzle-orm';
+import { eq, or, and, desc, ne, sql } from 'drizzle-orm';
 import { signIn, signOut } from '@/auth';
 import { auth } from '@/auth';
 
@@ -259,7 +259,12 @@ export const whosLoggedIn = os.handler(async () => {
         ne(tasks.status, 'done') // status is NOT "done"
       )
     )
-    .where(eq(userStatus.isOnline, true));
+    .where(
+      or(
+        eq(userStatus.isOnline, true),
+        or(eq(tasks.status, 'not_started'), eq(tasks.status, 'in_progress'))
+      )
+    );
 
   return result;
 });

@@ -209,21 +209,9 @@ export default function Whosonline() {
       transition={{ duration: 0.8, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
       className="w-full"
     >
-      <div className="flex flex-col gap-2 border-2 p-2 ">
-        <div className="flex flex-row gap-4 items-center h-16">
-          <Avatar>
-            <AvatarImage
-              src="rick-sanchez-face-free-vector.jpg"
-              alt="@shadcn"
-              className="grayscale"
-            />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <h1>Who is online?</h1>
-        </div>
+      <Toaster />
 
-        <Toaster />
-
+      <div className="my-5 flex gap-2 flex-col">
         {isOnline && (
           <Button
             onClick={async () => {
@@ -356,13 +344,12 @@ export default function Whosonline() {
             </div>
           ) : (
             <div>
-              <h2 className="p-2">{user?.email}</h2>
-              <div>
+              <div className="flex w-full px-2 flex-col py-2">
                 <Dialog open={updateTaskOpen} onOpenChange={setUpdateTaskOpen}>
                   <DialogTrigger
-                    className={`${buttonVariants({ variant: 'elevated' })} m-2 w-50 cursor-pointer`}
+                    className={`${buttonVariants({ variant: 'elevated' })}  cursor-pointer w-full`}
                   >
-                    Update my task
+                    Create new task
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
@@ -520,7 +507,7 @@ export default function Whosonline() {
                       <div>
                         <Button
                           variant={'elevated'}
-                          className="h-14 m-2  w-50 bg-green-700 text-white cursor-pointer"
+                          className="h-14 m-2  w-full bg-green-700 text-white cursor-pointer"
                           onClick={async () => {
                             if (user) {
                               const updateTask = await orpc.tasks.startmytask({
@@ -553,7 +540,7 @@ export default function Whosonline() {
                       <div>
                         <Button
                           variant={'elevated'}
-                          className="h-14 m-2 w-50 bg-red-700 text-white cursor-pointer"
+                          className="h-14 mt-2 w-full bg-red-700 text-white cursor-pointer"
                           onClick={async () => {
                             if (user) {
                               const updateTask = await orpc.tasks.endmytask({
@@ -580,7 +567,9 @@ export default function Whosonline() {
                         </Button>
                       </div>
                     ) : (
-                      <div className="m-2">You have no running task</div>
+                      <div className="mt-2 w-full flex justify-center items-center h-16">
+                        You have no running task
+                      </div>
                     )}
                   </div>
                 )}
@@ -588,7 +577,22 @@ export default function Whosonline() {
             </div>
           )}
         </div>
-        <div className="min-h-20 max-h-150 dark:bg-gray-800 border-2 ">
+      </div>
+
+      <div className="flex flex-col gap-2 border-2 p-2 ">
+        <div className="flex flex-row gap-4 items-center h-16">
+          <Avatar>
+            <AvatarImage
+              src="rick-sanchez-face-free-vector.jpg"
+              alt="@shadcn"
+              className="grayscale"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <h1>Who is online?</h1>
+        </div>
+
+        <div className="min-h-20 max-h-250 overflow-scroll dark:bg-gray-800 border-2 ">
           <div className="grid grid-cols-1 md:grid-cols-5 grid-rows-auto">
             {isUsersOnline ? (
               isUsersOnline.map((ts, idx) => (
