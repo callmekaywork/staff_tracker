@@ -38,7 +38,7 @@ export default function Task_report() {
   return (
     <div className="w-full mt-7">
       <div className="flex flex-col gap-2 border-2 p-2 ">
-        <Label className="text-4xl">Old Tasks Reports</Label>
+        <Label className="text-4xl">Task Records</Label>
         <div>
           {/* {isTasks.map((ind, idx) => (
             <div key={idx} className="flex flex-row gap-5">

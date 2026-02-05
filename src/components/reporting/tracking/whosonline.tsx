@@ -211,275 +211,11 @@ export default function Whosonline() {
     >
       <Toaster />
 
-      <div className="my-5 flex gap-2 flex-col">
+      <div className={`${!isOnline && 'hidden'} my-5 flex gap-2 flex-col`}>
         <div className="min-h-20 dark:bg-gray-800 border-2">
-          {!isOnline ? (
-            <div className="w-full flex flex-col min-h-30 justify-center items-center gap-2">
-              <h1>No User is Online</h1>
-
-              <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
-                <DialogTrigger className="text-4xl cursor-pointer">
-                  Start my work day (Login)
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Are you in the database?</DialogTitle>
-                    <DialogDescription>
-                      This is a login dialog
-                    </DialogDescription>
-                    <DialogContent>
-                      <div>
-                        <form
-                          onSubmit={loginFormSubmitHandler(loginFormSubmit)}
-                          // action={formAction}
-                          className="flex flex-col w-full space-y-4"
-                        >
-                          <FieldGroup>
-                            <Controller
-                              control={loginControl}
-                              name="email"
-                              render={({ field, fieldState }) => (
-                                <Field>
-                                  <FieldLabel htmlFor={field.name}>
-                                    Email:
-                                  </FieldLabel>
-                                  <Input
-                                    {...field}
-                                    id={field.name}
-                                    type="email"
-                                    placeholder="Enter your company email...."
-                                    aria-invalid={fieldState.invalid}
-                                  />
-                                  {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                  )}
-                                </Field>
-                              )}
-                            />
-
-                            <Controller
-                              control={loginControl}
-                              name="password"
-                              render={({ field, fieldState }) => (
-                                <Field>
-                                  <FieldLabel htmlFor={field.name}>
-                                    Password:
-                                  </FieldLabel>
-                                  {/* <Input
-                                    {...field}
-                                    id={field.name}
-                                    type="password"
-                                    placeholder="Enter your secret password...."
-                                    aria-invalid={fieldState.invalid}
-                                  /> */}
-                                  <div className="relative">
-                                    <Input
-                                      {...field}
-                                      id={field.name}
-                                      type={showPassword ? 'text' : 'password'}
-                                      placeholder="Enter your secret password..."
-                                      aria-invalid={fieldState.invalid}
-                                    />
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      className="absolute right-2 top-2"
-                                      onClick={() =>
-                                        setShowPassword(!showPassword)
-                                      }
-                                    >
-                                      {showPassword ? 'Hide' : 'Show'}{' '}
-                                    </Button>
-                                  </div>
-
-                                  {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                  )}
-                                </Field>
-                              )}
-                            />
-                          </FieldGroup>
-
-                          {/* Submit */}
-                          {/* <DialogClose></DialogClose> */}
-                          <Button
-                            className="mt-1 h-16 cursor-pointer bg-gray-500 text-white"
-                            variant={'elevated'}
-                            type="submit"
-                          >
-                            {isForcedLoading === true ? (
-                              <Whiteloader />
-                            ) : (
-                              'Check my email'
-                            )}
-                          </Button>
-                        </form>
-                      </div>
-                    </DialogContent>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </div>
-          ) : (
+          {isOnline && (
             <div>
               <div className="flex w-full px-2 flex-col py-2">
-                <Dialog open={updateTaskOpen} onOpenChange={setUpdateTaskOpen}>
-                  <DialogTrigger
-                    className={`${buttonVariants({ variant: 'elevated' })}  cursor-pointer w-full`}
-                  >
-                    Create new task
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>What are you busy with today</DialogTitle>
-                      <DialogDescription>Updating my task</DialogDescription>
-                    </DialogHeader>
-                    <div>
-                      <form
-                        onSubmit={taskHandleSubmit(taskSubmit)}
-                        className="flex flex-col gap-5"
-                      >
-                        <FieldGroup>
-                          <Controller
-                            control={control}
-                            name="title"
-                            render={({ field, fieldState }) => (
-                              <Field>
-                                <FieldLabel htmlFor={field.name}>
-                                  Title:
-                                </FieldLabel>
-                                <Input
-                                  {...field}
-                                  id={field.name}
-                                  type="text"
-                                  placeholder="Enter your task title...."
-                                  aria-invalid={fieldState.invalid}
-                                />
-                                {fieldState.invalid && (
-                                  <FieldError errors={[fieldState.error]} />
-                                )}
-                              </Field>
-                            )}
-                          />
-                          <Controller
-                            control={control}
-                            name="description"
-                            render={({ field, fieldState }) => (
-                              <Field>
-                                <FieldLabel htmlFor={field.name}>
-                                  Description{' '}
-                                  <span className="text-amber-700">
-                                    (optional)
-                                  </span>
-                                  :
-                                </FieldLabel>
-                                <Input
-                                  {...field}
-                                  id={field.name}
-                                  type="text"
-                                  placeholder="Enter your task description...."
-                                  aria-invalid={fieldState.invalid}
-                                />
-                                {fieldState.invalid && (
-                                  <FieldError errors={[fieldState.error]} />
-                                )}
-                              </Field>
-                            )}
-                          />
-                        </FieldGroup>
-                        <FieldGroup>
-                          <Controller
-                            control={control}
-                            name="status"
-                            render={({ field, fieldState }) => (
-                              <Field>
-                                <FieldLabel>Status: </FieldLabel>
-
-                                <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                >
-                                  <SelectTrigger className="h-14">
-                                    <SelectValue
-                                      className="h-14"
-                                      placeholder="Select Status Type"
-                                    />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem
-                                      className="h-14"
-                                      value="not_started"
-                                    >
-                                      Not Started
-                                    </SelectItem>
-                                    <SelectItem
-                                      className="h-14"
-                                      value="in_progress"
-                                    >
-                                      In Progress
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                {fieldState.invalid && (
-                                  <FieldError errors={[fieldState.error]} />
-                                )}
-                              </Field>
-                            )}
-                          />
-
-                          <Controller
-                            control={control}
-                            name="priority"
-                            render={({ field, fieldState }) => (
-                              <Field>
-                                <FieldLabel>Priority: </FieldLabel>
-
-                                <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                >
-                                  <SelectTrigger className="h-14">
-                                    <SelectValue
-                                      className="h-14"
-                                      placeholder="Select Status Type"
-                                    />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem className="h-14" value="low">
-                                      Priority Low
-                                    </SelectItem>
-                                    <SelectItem className="h-14" value="medium">
-                                      Priority Medium
-                                    </SelectItem>
-                                    <SelectItem className="h-14" value="high">
-                                      Priority High
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                {fieldState.invalid && (
-                                  <FieldError errors={[fieldState.error]} />
-                                )}
-                              </Field>
-                            )}
-                          />
-                        </FieldGroup>
-                        <Button
-                          className="mt-1 h-16 cursor-pointer bg-gray-500 text-white w-full"
-                          variant={'elevated'}
-                          type="submit"
-                        >
-                          {isForcedLoading === true ? (
-                            <Whiteloader />
-                          ) : (
-                            'Update my task'
-                          )}
-                        </Button>
-                      </form>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-
                 {isUserTask.length > 0 && (
                   <div>
                     {isUserTask[0].status === 'not_started' ? (
@@ -558,7 +294,7 @@ export default function Whosonline() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 border-2 p-2 ">
+      <div className="flex flex-col gap-2 border-2 p-2 my-4">
         <div className="flex flex-row gap-4 items-center h-16">
           <Avatar>
             <AvatarImage
@@ -585,9 +321,9 @@ export default function Whosonline() {
                       <span className="text-[12px]">Online</span>
                     </div>
                   ) : (
-                    <div className="absolute top-2 left-2 flex flex-row gap-2 items-center justify-center">
+                    <div className="absolute top-2 right-2 flex flex-row-reverse gap-2 items-center justify-center">
                       <div className="h-4 w-4 bg-red-600 rounded-full"></div>
-                      Offline
+                      <span className="text-[12px]">Offline</span>
                     </div>
                   )}
                   <div className="flex flex-col gap-2 justify-center items-start bg-color-mercury-500 py-4">

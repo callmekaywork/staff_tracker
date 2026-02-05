@@ -292,6 +292,7 @@ export const dailyTracker = os.handler(async () => {
     .from(users)
     .leftJoin(userStatus, eq(users.id, userStatus.userId))
     .leftJoin(tasks, eq(users.id, tasks.userId))
+    .where(and(eq(userStatus.userId, users.id), eq(tasks.userId, users.id)))
     .orderBy(sql`task_day desc`);
 
   return result;
