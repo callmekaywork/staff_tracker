@@ -577,7 +577,7 @@ export default function Whosonline() {
               isUsersOnline.map((ts, idx) => (
                 <div
                   key={idx}
-                  className="relative m-2 border-2 flex flex-row items-centser justify-start gap-2 px-3 sm:w-40 md:w-50 h-37 rounded-none shadow-md"
+                  className="relative m-2 border-2 flex flex-row items-centser justify-start gap-2 px-3 sm:w-40 md:w-50 h-42 rounded-none shadow-md"
                 >
                   {ts.isOnline ? (
                     <div className="absolute top-2 right-2 flex flex-row-reverse gap-2 items-center justify-center">
