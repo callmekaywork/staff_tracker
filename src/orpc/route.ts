@@ -292,7 +292,6 @@ export const dailyTracker = os.handler(async () => {
     .from(users)
     .leftJoin(userStatus, eq(users.id, userStatus.userId))
     .leftJoin(tasks, eq(users.id, tasks.userId))
-    .where(or(eq(userStatus.isOnline, true), eq(tasks.status, 'done')))
     .orderBy(sql`task_day desc`);
 
   return result;
