@@ -589,12 +589,12 @@ export default function Whosonline() {
           )}
         </div>
         <div className="min-h-20 max-h-150 dark:bg-gray-800 border-2 ">
-          <div className="grid grid-cols-2 md:grid-cols-5 grid-rows-auto">
+          <div className="grid grid-cols-1 md:grid-cols-5 grid-rows-auto">
             {isUsersOnline ? (
               isUsersOnline.map((ts, idx) => (
                 <div
                   key={idx}
-                  className="relative m-2 border-2 flex flex-col items-center justify-center gap-2 w-36 sm:w-40 md:w-50 h-42 rounded-[10px] shadow-sm"
+                  className="relative m-2 border-2 flex flex-row items-centser justify-start gap-2 px-3 sm:w-40 md:w-50 h-37 rounded-none shadow-md"
                 >
                   {ts.isOnline ? (
                     <div className="absolute top-2 right-2 flex flex-row-reverse gap-2 items-center justify-center">
@@ -607,24 +607,19 @@ export default function Whosonline() {
                       Offline
                     </div>
                   )}
-
-                  <div className="flex flex-col justify-center items-center bg-color-mercury-500 ">
-                    <div className="w-full px-2">
-                      <h1 className="font-semibold">{ts.firstname}</h1>
-                    </div>
-                    <div className="flex gap-2 flex-col bg-gray-300 dark:bg-slate-800 border-2 rounded-[10px] p-2 py-3">
-                      <Label className="text-2xl">Task:</Label>
-                      {ts.task_title != '' ? (
-                        <div className="min-h-15">
-                          {ts.task_title}
-                          <Label>status: {ts.task_status}</Label>
-                        </div>
-                      ) : (
-                        <>
-                          <label>Not Doing anything!</label>
-                        </>
-                      )}
-                    </div>
+                  <div className="flex flex-col gap-2 justify-center items-start bg-color-mercury-500 py-4">
+                    <h1 className="font-semibold text-xl">{ts.firstname}</h1>
+                    <Label className="text-md">Task:</Label>
+                    {ts.task_title != '' ? (
+                      <div className="min-h-15">
+                        {ts.task_title}
+                        <Label>status: {ts.task_status}</Label>
+                      </div>
+                    ) : (
+                      <>
+                        <label>Not Doing anything!</label>
+                      </>
+                    )}
                   </div>
                 </div>
               ))
