@@ -158,7 +158,9 @@ export default function Task_report() {
                     key={idx}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900"
                   >
-                    <td className="border border-gray-300 px-2 py-2">{idx}</td>
+                    <td className="border border-gray-300 px-2 py-2">
+                      {idx + 1}
+                    </td>
                     <td className="border border-gray-300 px-2 py-2">
                       {ind.email}
                     </td>
@@ -174,7 +176,7 @@ export default function Task_report() {
                         {ind.task_desc}
                       </p>
 
-                      {ind.task_desc && ind.task_desc.length > 20 && (
+                      {ind.task_desc && ind.task_desc.length > 30 && (
                         <div className="flex w-full justify-end px-2">
                           <button
                             onClick={() => setExpanded(!expanded)}
