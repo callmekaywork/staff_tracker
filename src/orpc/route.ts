@@ -12,6 +12,7 @@ import { ORPCError, os } from '@orpc/server';
 import {
   assistanceRecordSchema,
   checkLoginSchema,
+  createUserSchema,
   updateTaskSchema,
 } from '@/db/validators';
 import { eq, or, and, desc, ne, sql } from 'drizzle-orm';
@@ -21,6 +22,9 @@ import { auth } from '@/auth';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import bcrypt from 'bcrypt';
+import { nanoid } from 'nanoid';
+
 const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -29,37 +33,37 @@ const LoginSchema = z.object({
 // export const assistanceRouter = router({ getAll: publicProcedure.query(async () => { const records = await db.select().from(assistanceRecords); // Optionally validate with Zod before returning return records.map(r => assistanceRecordSchema.parse(r)); }),
 
 // Auth
-export const authLogin = os
+export const authCreateUser = os
   .$context<{ headers: IncomingHttpHeaders }>()
-  .input(checkLoginSchema)
+  .input(createUserSchema)
   .handler(async ({ input, context }) => {
-    // Perform delete
-    // try {
-    //   const res = await signIn('credentials', {
-    //     redirect: false,
-    //     email: input.email,
-    //     password: input.password,
-    //   });
-    //   if (res?.error) {
-    //     throw new Error(res.error);
-    //   }
-    //   return res;
-    //   // const res = await signIn('credentials', {
-    //   //   redirect: false,
-    //   //   email: input.email,
-    //   //   password: input.password,
-    //   //   // callbackUrl: "/dashboard",
-    //   // });
-    //   console.log('is it getting here', input);
-    //   // if (session?.error) {
-    //   //   // window.location.href = "/"; // ✅ triggers middleware with fresh cookies
-    //   //   console.log('check errors');
-    //   //   return { error: res.error };
-    //   // }
-    //   // return { success: true };
-    // } catch (err) {
-    //   return { error: `Unexpected error during sign-in.: ${err}` };
-    // }
+    const existing = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, `${input.email}`));
+
+    if (existing.length > 0) {
+      return {
+        error: 'User email already Exist | delete it or Choose another email',
+        success: null,
+      };
+    } else {
+      // staffAccounts.map(async (entry) => {
+      const hash = await bcrypt.hash(`${input.password}`, 10);
+      await db.insert(users).values({
+        id: nanoid(),
+        firstname: `${input.firstName}`,
+        lastname: `${input.lastName}`,
+        email: `${input.email}`,
+        role: input.role,
+        password: `${hash}`,
+      });
+
+      return {
+        error: null,
+        success: `Account with email ${input.email} was added`,
+      };
+    }
   });
 
 export const authCheckemail = os
@@ -375,6 +379,7 @@ export const endingMyTask = os
 export const router = {
   auth: {
     email_check: authCheckemail,
+    create: authCreateUser,
     login: loginOutput,
     signout: os
       .input(z.object({ id: z.string() }))

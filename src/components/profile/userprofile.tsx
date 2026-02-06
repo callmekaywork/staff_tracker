@@ -43,6 +43,7 @@ import { checkLoginSchema, updateTaskSchema } from '@/db/validators';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Textarea } from '../ui/textarea';
+import Link from 'next/link';
 
 export default function Userprofile() {
   const { isOnline, user, loading } = useCheckUser();
@@ -150,7 +151,7 @@ export default function Userprofile() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0.8, scale: 0.9 }}
           transition={{ duration: 0.3 }}
-          className="md:w-1/2"
+          className="md:w-1/2 h-45"
         >
           <div className="flex h-35 items-center gap-4 border-2 w-full px-2 py-8 bg-gray-400 border-gray-600 animate-pulse ">
             <Skeleton className="h-16 w-16 rounded-full" />
@@ -165,7 +166,7 @@ export default function Userprofile() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0.8, scale: 0.9 }}
           transition={{ duration: 0.3 }}
-          className="md:w-1/2"
+          className="md:w-1/2 h-45"
         >
           <div className="flex h-35 items-center gap-4 border-2 w-full px-2 py-8 bg-gray-400 border-gray-600 animate-pulse ">
             <div className="space-y-2">
@@ -185,10 +186,10 @@ export default function Userprofile() {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0.8, scale: 0.9 }}
         transition={{ duration: 0.3, delay: 0.2 }}
-        className="border-2 h-35 w-full md:w-1/2 p-2"
+        className="border-2 h-45 w-full md:w-1/2 p-2"
       >
-        {isOnline ? (
-          <div className="flex flex-col ">
+        {isOnline && user ? (
+          <div className="flex flex-col">
             <div className="flex flex-row gap-2">
               <div className="flex justify-center items-center rounded-full bg-slate-400 h-16 w-16">
                 <Camera className="opacity-40" />
@@ -205,23 +206,40 @@ export default function Userprofile() {
                 )}
               </div>
             </div>
-            <Button
-              onClick={async () => {
-                if (user) {
-                  setIsForcedLoading(true);
+            <div>
+              <p>Functions</p>
+              <div className="flex flex-row gap-5">
+                {user.role && (
+                  <div>
+                    <Link href={'/addusers'} className="underline">
+                      Create A New User
+                    </Link>
+                  </div>
+                )}
+                <Button
+                  onClick={async () => {
+                    if (user) {
+                      setIsForcedLoading(true);
 
-                  await orpc.auth.signout({ id: user.id });
+                      await orpc.auth.signout({ id: user.id });
 
-                  setTimeout(() => {
-                    setIsForcedLoading(false);
-                    window.location.reload();
-                  }, 3000);
-                }
-              }}
-              className="cursor-pointer mt-4 w-full"
-            >
-              {isForcedLoading === true ? <Whiteloader /> : 'Sign Yourself Out'}
-            </Button>
+                      setTimeout(() => {
+                        setIsForcedLoading(false);
+                        window.location.reload();
+                      }, 3000);
+                    }
+                  }}
+                  className="cursor-pointer mt-4 w-40
+                  "
+                >
+                  {isForcedLoading === true ? (
+                    <Whiteloader />
+                  ) : (
+                    'Sign Yourself Out'
+                  )}
+                </Button>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="flex gap-2 flex-col">
@@ -347,7 +365,7 @@ export default function Userprofile() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0.8, scale: 0.9 }}
           transition={{ duration: 0.8, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
-          className="border-2 flex justify-center items-center md:items-start h-35 w-full md:w-1/2 p-2"
+          className="border-2 flex justify-center items-center md:items-start h-45 w-full md:w-1/2 p-2"
         >
           <Dialog open={updateTaskOpen} onOpenChange={setUpdateTaskOpen}>
             <DialogTrigger

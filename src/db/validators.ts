@@ -37,6 +37,14 @@ export const checkLoginSchema = z.object({
   password: z.string(),
 });
 
+export const createUserSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  password: z.string(),
+  role: z.enum(['admin', 'staff']),
+});
+
 export const updateTaskSchema = z.object({
   title: z.string().min(5),
   description: z.string().optional(),

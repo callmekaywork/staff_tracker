@@ -4,6 +4,7 @@ import './globals.css';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { SessionProvider } from 'next-auth/react';
+import Header from '@/components/header/head';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -29,6 +30,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Header />
             {children}
           </ThemeProvider>
         </SessionProvider>

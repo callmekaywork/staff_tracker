@@ -13,7 +13,6 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <div className="flex flex-col items-center min-h-screen font-sans ">
-      <Header />
       {/* <Onlinetoast /> */}
       <main className="flex min-h-screen w-full md:max-w-4xl lg:max-w-6xl flex-col items-center py-10 px-5 sm:items-start transition-all transition-normal delay-75 ease-in-out">
         {/* <Tabs /> */}
