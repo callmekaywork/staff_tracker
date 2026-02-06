@@ -84,6 +84,7 @@ type DailyTaskTrackerType = {
   firstname: string | null;
   role: 'user' | 'admin' | 'staff';
   task_title: string | null;
+  task_desc: string | null;
   task_day: string | null;
   task_started: Date | null;
   task_status: string | null;

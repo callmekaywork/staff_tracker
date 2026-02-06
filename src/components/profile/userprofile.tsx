@@ -42,6 +42,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { checkLoginSchema, updateTaskSchema } from '@/db/validators';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Textarea } from '../ui/textarea';
 
 export default function Userprofile() {
   const { isOnline, user, loading } = useCheckUser();
@@ -390,13 +391,12 @@ export default function Userprofile() {
                       render={({ field, fieldState }) => (
                         <Field>
                           <FieldLabel htmlFor={field.name}>
-                            Description{' '}
+                            Description
                             <span className="text-amber-700">(optional)</span>:
                           </FieldLabel>
-                          <Input
+                          <Textarea
                             {...field}
                             id={field.name}
-                            type="text"
                             placeholder="Enter your task description...."
                             aria-invalid={fieldState.invalid}
                           />

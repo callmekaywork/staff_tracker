@@ -9,6 +9,8 @@ export default function Task_report() {
   // Group by user and date
   const [isTasks, setIsTasks] = useState<DailyTaskTrackerType[]>([]);
 
+  const [expanded, setExpanded] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -33,6 +35,42 @@ export default function Task_report() {
 
   function FormatDate(time: string) {
     return new Date(time).toDateString().split('T')[0];
+  }
+
+  function DateDifference(start: Date, end: Date) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    // Difference in milliseconds
+    const diffMs = endDate.getTime() - startDate.getTime();
+
+    // Convert to days
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+    const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+    return (
+      <div className="flex flex-row items-center">
+        {diffHours} hrs {diffMinutes} min
+      </div>
+    );
+  }
+
+  function DateDifferenceF(start: Date, end: Date) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    const diffMs = endDate.getTime() - startDate.getTime();
+
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+    const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+    return (
+      <p>
+        Difference: {diffDays} days, {diffHours} hours, {diffMinutes} minutes
+      </p>
+    );
   }
 
   return (
@@ -87,11 +125,15 @@ export default function Task_report() {
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
                 <tr className="bg-gray-100 dark:bg-gray-700 ">
+                  <th className="border border-gray-300 px-2 py-2 text-left"></th>
                   <th className="border border-gray-300 px-2 py-2 text-left">
                     Email
                   </th>
                   <th className="border border-gray-300 px-2 py-2 text-left">
                     Task Title
+                  </th>
+                  <th className="border border-gray-300 px-2 py-2 text-left">
+                    Task Description
                   </th>
                   <th className="border border-gray-300 px-2 py-2 text-left">
                     Task Status
@@ -103,8 +145,11 @@ export default function Task_report() {
                     Task Priority
                   </th>
                   <th className="border border-gray-300 px-2 py-2 text-left">
-                    Task Day
+                    Ended?
                   </th>
+                  {/* <th className="border border-gray-300 px-2 py-2 text-left">
+                    duration
+                  </th> */}
                 </tr>
               </thead>
               <tbody>
@@ -113,11 +158,32 @@ export default function Task_report() {
                     key={idx}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900"
                   >
+                    <td className="border border-gray-300 px-2 py-2">{idx}</td>
                     <td className="border border-gray-300 px-2 py-2">
                       {ind.email}
                     </td>
                     <td className="border border-gray-300 px-2 py-2">
                       {ind.task_title}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2">
+                      <p
+                        className={
+                          expanded ? 'line-clamp-none' : 'line-clamp-2'
+                        }
+                      >
+                        {ind.task_desc}
+                      </p>
+
+                      {ind.task_desc && ind.task_desc.length > 20 && (
+                        <div className="flex w-full justify-end px-2">
+                          <button
+                            onClick={() => setExpanded(!expanded)}
+                            className="text-blue-600 mt-2"
+                          >
+                            {expanded ? 'Show less' : 'Show more'}
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td className="border border-gray-300 px-2 py-2">
                       {ind.task_status == 'not_started'
@@ -133,8 +199,11 @@ export default function Task_report() {
                       {ind.task_priority}
                     </td>
                     <td className="border border-gray-300 px-2 py-2">
-                      {FormatDate(ind.task_day!)}
+                      {ind.task_ended?.toDateString()}
                     </td>
+                    {/* <td className="border border-gray-300 px-2 py-2">
+                      {DateDifference(ind.task_started!, ind.task_ended!)}
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
@@ -171,6 +240,10 @@ export default function Task_report() {
           >
             Next
           </button>
+        </div>
+        <div className="flex h-14 justify-center gap-2 ">
+          <Label>Total in database:</Label>
+          <Label>{isTasks.length}</Label>
         </div>
       </div>
     </div>
