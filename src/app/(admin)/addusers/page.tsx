@@ -70,7 +70,7 @@ export default function Adduser() {
     <div className="w-full flex-col flex justify-center items-center p-5">
       <Toaster />
       <h1 className="text-4xl my-10">Create new User</h1>
-      <div className="w-150">
+      <div className="w-full md:w-150">
         <form
           onSubmit={createFormSubmitHandler(createFormSubmit)}
           // action={formAction}

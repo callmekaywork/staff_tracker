@@ -74,8 +74,6 @@ export default function Userprofile() {
     },
   });
 
-  // this was added in the browser
-
   const { control: loginControl, handleSubmit: loginFormSubmitHandler } =
     loginForm;
 
