@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { orpc } from '@/orpc/client';
 import { DailyTaskTrackerType } from '@/types/next-auth';
@@ -8,11 +10,11 @@ import React, { useEffect, useState } from 'react';
 export default function Task_report() {
   // Group by user and date
   const [isTasks, setIsTasks] = useState<DailyTaskTrackerType[]>([]);
+  const [itemsPerPage, setItemsPerPage] = useState(15);
 
   const [expanded, setExpanded] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
   // Calculate indexes
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -70,6 +72,28 @@ export default function Task_report() {
       <p>
         Difference: {diffDays} days, {diffHours} hours, {diffMinutes} minutes
       </p>
+    );
+  }
+
+  function changeStuff() {
+    return (
+      <div className="h-auto py-2 flex flex-row gap-3 items-center mt-2">
+        <h1>Set How many you see:</h1>
+        <Input
+          value={itemsPerPage}
+          type={'tel'}
+          min={2}
+          max={300}
+          onChange={(e) => {
+            const value = Number(e.target.value);
+            if (!isNaN(value)) {
+              const clamped = Math.max(2, Math.min(300, value));
+              setItemsPerPage(clamped);
+            }
+          }}
+          className="h-8 w-12 flex justify-center items-center"
+        />
+      </div>
     );
   }
 
@@ -153,7 +177,7 @@ export default function Task_report() {
                 </tr>
               </thead>
               <tbody>
-                {isTasks.map((ind, idx) => (
+                {currentItems.map((ind, idx) => (
                   <tr
                     key={idx}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900"
